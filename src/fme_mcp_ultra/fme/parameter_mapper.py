@@ -38,3 +38,4 @@ def map_fme_param_to_json_schema(
         schema["type"] = "string"
 
     return schema
+

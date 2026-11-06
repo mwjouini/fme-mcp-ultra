@@ -221,3 +221,4 @@ The official project language is **British English (en-GB)**.
 
 Licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for details.
 Copyright © 2026 Mohamed Wael JOUINI and Contributors.
+

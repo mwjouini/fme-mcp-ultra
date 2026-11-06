@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fme-mcp-config
+  namespace: fme-mcp
+  labels:
+    app.kubernetes.io/name: fme-mcp-ultra
+data:
+  FME_MCP_ENVIRONMENT: "production"
+  FME_MCP_LOG_LEVEL: "INFO"
+  FME_MCP_TRANSPORT: "streamable_http"
+  FME_MCP_HOST: "0.0.0.0"
+  FME_MCP_PORT: "8000"
+  FME_MCP_RATE_LIMIT_ENABLED: "true"
+  FME_MCP_RATE_LIMIT_RPS: "50"
+  FME_FLOW_VERIFY_SSL: "true"
+  FME_MCP_ALLOWED_DIRS: "/data;/workspaces"

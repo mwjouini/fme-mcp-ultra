@@ -63,3 +63,4 @@ class PathGuard:
 
 # Global PathGuard singleton
 path_guard = PathGuard()
+

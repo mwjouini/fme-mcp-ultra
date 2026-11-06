@@ -22,3 +22,4 @@ body:
     attributes:
       label: Proposed Solution or Tool Signature
       placeholder: "tool: gis_export_cog(input_raster, output_path, overview_levels)"
+

@@ -72,3 +72,4 @@ We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 3. Verify that all automated CI checks pass.
 4. Ensure documentation is updated.
 5. Submit your Pull Request using the [PR template](.github/PULL_REQUEST_TEMPLATE.md).
+

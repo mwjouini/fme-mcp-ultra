@@ -76,6 +76,23 @@ def fme_compare_workspaces(workspace_a: str, workspace_b: str) -> Dict[str, Any]
     return workspace_tools.fme_compare_workspaces(workspace_a=workspace_a, workspace_b=workspace_b)
 
 
+@mcp_server.tool()
+def fme_enrich_geolocalisation(
+    source_csv: Optional[str] = None,
+    output_geoloc_xlsx: Optional[str] = None,
+    output_non_geoloc_xlsx: Optional[str] = None,
+    output_gpkg: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Execute the enriched geolocalisation pipeline with automatic BAN geocoding and GeoPackage output."""
+    return workspace_tools.fme_enrich_geolocalisation(
+        source_csv=source_csv,
+        output_geoloc_xlsx=output_geoloc_xlsx,
+        output_non_geoloc_xlsx=output_non_geoloc_xlsx,
+        output_gpkg=output_gpkg,
+    )
+
+
+
 # ==============================================================================
 # SPATIAL TOOLS
 # ==============================================================================
@@ -317,3 +334,4 @@ def util_version() -> Dict[str, Any]:
 def util_validate_coordinates(latitude: float, longitude: float) -> Dict[str, Any]:
     """Validate whether geographic coordinates fall within standard WGS84 ranges."""
     return util_tools.util_validate_coordinates(latitude=latitude, longitude=longitude)
+

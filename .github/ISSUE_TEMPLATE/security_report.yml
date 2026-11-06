@@ -12,3 +12,4 @@ body:
     attributes:
       label: General Non-Sensitive Details
       placeholder: "Indicate component and impact without disclosing exploit payloads."
+

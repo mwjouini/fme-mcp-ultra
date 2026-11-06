@@ -65,3 +65,4 @@ def workflow_run(workflow_id: str) -> Dict[str, Any]:
     }
     _RUNS_STORE[run_id] = run_record
     return MCPToolResponse(success=True, data=run_record).to_dict()
+

@@ -14,3 +14,4 @@ All settings can be configured via environment variables (prefixed with `FME_MCP
 | `FME_TIMEOUT_SECONDS` | `600` | Maximum execution timeout for workspaces |
 | `FME_FLOW_URL` | None | Base URL of enterprise FME Flow instance |
 | `FME_FLOW_TOKEN` | None | Bearer token for FME Flow REST authentication |
+

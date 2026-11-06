@@ -16,3 +16,4 @@
    - Strict Zero-Trust security compliance (no regression in PathGuard/SSRF guard).
    - 100% test coverage for security-critical paths.
    - Backward compatibility with FME 2025.2.
+

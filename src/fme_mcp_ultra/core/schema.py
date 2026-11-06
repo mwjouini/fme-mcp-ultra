@@ -28,3 +28,4 @@ class MCPToolResponse(BaseModel):
     def to_dict(self) -> Dict[str, Any]:
         """Convert response to dictionary with strict typing."""
         return self.model_dump()
+

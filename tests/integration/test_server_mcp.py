@@ -50,3 +50,4 @@ async def test_mcp_server_inspect_geolocalisation_fmw():
         res = await mcp_server.call_tool("fme_get_workspace", {"workspace_path": str(sample_fmw)})
         assert res is not None
         assert "geolocalisation.fmw" in res.content[0].text
+

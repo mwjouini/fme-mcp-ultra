@@ -42,3 +42,4 @@ class AuditLogger:
 
 
 audit_logger = AuditLogger()
+

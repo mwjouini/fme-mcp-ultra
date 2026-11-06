@@ -22,3 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive tool catalogue spanning spatial analysis, data engineering, quality verification, and metadata.
 - Pre-configured client settings for Claude Desktop, Cursor, Antigravity, and VS Code.
 - Automated CI/CD pipelines for linting, security scanning, container builds, and documentation.
+

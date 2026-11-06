@@ -131,3 +131,48 @@ def fme_compare_workspaces(workspace_a: str, workspace_b: str) -> Dict[str, Any]
             "writers_b": info_b.get("writers"),
         },
     ).to_dict()
+
+
+def fme_enrich_geolocalisation(
+    source_csv: Optional[str] = None,
+    output_geoloc_xlsx: Optional[str] = None,
+    output_non_geoloc_xlsx: Optional[str] = None,
+    output_gpkg: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Execute the enriched geolocalisation pipeline with automatic BAN geocoding and GeoPackage output.
+
+    Cleans coordinate typos (trailing commas, non-numeric strings), geocodes un-located controls
+    via the French National Base Adresse Nationale (BAN) API, and exports to Excel and GeoPackage.
+
+    Args:
+        source_csv: Path to input CSV file (defaults to configured SMAS control tracking CSV).
+        output_geoloc_xlsx: Target path for geolocalised controls Excel workbook.
+        output_non_geoloc_xlsx: Target path for non-geolocalised controls Excel workbook.
+        output_gpkg: Target path for OGC GeoPackage point layer in EPSG:2154 (Lambert-93).
+    """
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    script_path = Path(r"E:\fme_mcp\run_geolocalisation_ultra.py")
+    if not script_path.exists():
+        return MCPToolResponse(success=False, error={"code": "SCRIPT_NOT_FOUND", "message": "Enrichment script not found"}).to_dict()
+
+    python_exe = sys.executable
+    cmd = [python_exe, str(script_path)]
+
+    audit_logger.record_event("ENRICH_GEOLOCALISATION", "mcp-user", "fme_enrich_geolocalisation")
+    res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+    return MCPToolResponse(
+        success=res.returncode == 0,
+        data={
+            "stdout": res.stdout,
+            "stderr": res.stderr if res.returncode != 0 else None,
+            "geoloc_xlsx": str(output_geoloc_xlsx or r"E:\fme_mcp\geolocalisé.xlsx"),
+            "non_geoloc_xlsx": str(output_non_geoloc_xlsx or r"E:\fme_mcp\non_geolocalisé.xlsx"),
+            "gpkg": str(output_gpkg or r"E:\fme_mcp\geolocalisé.gpkg"),
+        },
+    ).to_dict()
+
+

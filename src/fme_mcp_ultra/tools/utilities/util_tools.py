@@ -79,3 +79,4 @@ def util_validate_coordinates(latitude: float, longitude: float) -> Dict[str, An
             "valid_longitude": valid_lon,
         },
     ).to_dict()
+

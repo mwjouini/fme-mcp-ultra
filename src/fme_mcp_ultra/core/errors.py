@@ -68,3 +68,4 @@ class WorkspaceExecutionError(FMEMCPError):
 
     def __init__(self, message: str, exit_code: int = 1, log_summary: Optional[Dict[str, Any]] = None):
         super().__init__(message, code="WORKSPACE_EXECUTION_FAILED", details={"exit_code": exit_code, "log_summary": log_summary})
+

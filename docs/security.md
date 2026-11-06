@@ -30,3 +30,4 @@
   - `spatial_analyst`: Vector and raster GIS operations.
   - `auditor`: Compliance and audit logs only.
   - `read_only`: Inspection and queries only.
+

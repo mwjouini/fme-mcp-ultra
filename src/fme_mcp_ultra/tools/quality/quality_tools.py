@@ -70,3 +70,4 @@ def quality_generate_data_contract(dataset_name: str, schema_columns: Dict[str, 
         },
     }
     return MCPToolResponse(success=True, data=contract).to_dict()
+

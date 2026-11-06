@@ -164,3 +164,4 @@ def gis_validate_geometry(geojson_geometry: Dict[str, Any]) -> Dict[str, Any]:
         success=True,
         data={"type": g_type, "valid": is_valid, "issues": issues},
     ).to_dict()
+

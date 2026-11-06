@@ -90,3 +90,4 @@ def test_rbac_restricts_read_only_user():
 def test_rbac_enforcement_raises_on_denial():
     with pytest.raises(SecurityError):
         RBACEngine.enforce_permission({Role.READ_ONLY}, "fme_run_workspace")
+

@@ -1,0 +1,18 @@
+apiVersion: v2
+name: fme-mcp-ultra
+description: Production-grade Model Context Protocol server for Safe Software FME 2025.2
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - mcp
+  - fme
+  - geospatial
+  - ai-agents
+  - spatial-analysis
+home: https://github.com/mwjouini/fme-mcp-ultra
+sources:
+  - https://github.com/mwjouini/fme-mcp-ultra
+maintainers:
+  - name: Mohamed Wael JOUINI
+    email: wael.jouini@gmail.com

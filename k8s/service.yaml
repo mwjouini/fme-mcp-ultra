@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fme-mcp-ultra
+  namespace: fme-mcp
+  labels:
+    app.kubernetes.io/name: fme-mcp-ultra
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: fme-mcp-ultra
+  ports:
+    - name: http-mcp
+      port: 8000
+      targetPort: 8000
+      protocol: TCP

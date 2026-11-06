@@ -98,3 +98,4 @@ def data_profile(dataset_path: str, max_rows: int = 1000) -> Dict[str, Any]:
         success=True,
         data={"rows_analysed": row_count, "columns": profile_summary},
     ).to_dict()
+

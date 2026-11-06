@@ -58,3 +58,4 @@ class RBACEngine:
                 f"Authorisation failed: roles {[r.value for r in user_roles]} are not permitted to execute tool '{tool_name}'.",
                 code="FORBIDDEN",
             )
+

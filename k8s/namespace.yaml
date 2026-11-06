@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fme-mcp
+  labels:
+    app.kubernetes.io/name: fme-mcp-ultra
+    app.kubernetes.io/part-of: fme-integration
+    pod-security.kubernetes.io/enforce: restricted

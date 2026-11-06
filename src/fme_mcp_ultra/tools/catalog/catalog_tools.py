@@ -65,3 +65,4 @@ def catalog_get_lineage(asset_id: str) -> Dict[str, Any]:
             "downstream": ["web_sig_portal", "bi_executive_dashboard"],
         },
     ).to_dict()
+

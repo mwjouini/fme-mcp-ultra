@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: fme-mcp-network-policy
+  namespace: fme-mcp
+  labels:
+    app.kubernetes.io/name: fme-mcp-ultra
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: fme-mcp-ultra
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow HTTPS to external FME Flow and APIs
+    - ports:
+        - protocol: TCP
+          port: 443

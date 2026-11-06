@@ -40,3 +40,4 @@ Please include:
 - **CommandGuard**: Zero shell invocations (`shell=False`) protecting against command injection.
 - **SSRF Guard**: Automated DNS verification disallowing private/loopback IP addressing.
 - **Secret Redaction**: Proactive scrubbing of API tokens and PII before response delivery.
+
