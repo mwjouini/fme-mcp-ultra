@@ -1,0 +1,103 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fme-mcp-ultra"
+version = "1.0.0"
+description = "Universal, secure, extensible Model Context Protocol (MCP) server for Safe Software FME 2025.2, FME Form, FME Flow, and spatial data engineering."
+readme = "README.md"
+authors = [
+    { name = "Mohamed Wael JOUINI", email = "mohamed.wael.jouini@gmail.com" }
+]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+keywords = [
+    "fme",
+    "fme-form",
+    "fme-flow",
+    "mcp",
+    "model-context-protocol",
+    "gis",
+    "geospatial",
+    "etl",
+    "ai-agents",
+    "spatial-analysis",
+    "safe-software"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "httpx>=0.27.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.29.0",
+    "starlette>=0.37.0",
+    "cryptography>=42.0.0",
+    "pyjwt>=2.8.0",
+    "typer>=0.12.0",
+    "rich>=13.7.0",
+    "python-dotenv>=1.0.0",
+    "anyio>=4.3.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "bandit>=1.7.8"
+]
+docs = [
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.25.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/mwjouini/fme-mcp-ultra"
+Documentation = "https://github.com/mwjouini/fme-mcp-ultra#readme"
+Repository = "https://github.com/mwjouini/fme-mcp-ultra.git"
+Issues = "https://github.com/mwjouini/fme-mcp-ultra/issues"
+Changelog = "https://github.com/mwjouini/fme-mcp-ultra/blob/main/CHANGELOG.md"
+
+[project.scripts]
+fme-mcp-ultra = "fme_mcp_ultra.cli.main:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fme_mcp_ultra"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true

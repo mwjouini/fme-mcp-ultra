@@ -1,0 +1,14 @@
+name: Security Vulnerability Report
+description: Report a suspected security issue privately
+title: "[SECURITY]: "
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        CRITICAL: If this is an exploitable security vulnerability, please email `mohamed.wael.jouini@gmail.com` directly rather than creating a public issue.
+  - type: textarea
+    id: details
+    attributes:
+      label: General Non-Sensitive Details
+      placeholder: "Indicate component and impact without disclosing exploit payloads."

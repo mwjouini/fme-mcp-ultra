@@ -1,0 +1,24 @@
+name: Feature Request
+description: Propose a new feature, MCP tool, or transformer integration
+title: "[FEAT]: "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: feature_summary
+    attributes:
+      label: Feature Summary
+      placeholder: "Add support for GeoTIFF Cloud-Optimised pyramids..."
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case & Motivation
+      placeholder: "Explain the geospatial data problem this solves."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution or Tool Signature
+      placeholder: "tool: gis_export_cog(input_raster, output_path, overview_levels)"

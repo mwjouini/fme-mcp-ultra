@@ -1,0 +1,26 @@
+services:
+  fme-mcp-ultra:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/mwjouini/fme-mcp-ultra:latest
+    container_name: fme-mcp-ultra
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - FME_MCP_HOST=0.0.0.0
+      - FME_MCP_PORT=8000
+      - FME_MCP_TRANSPORT=streamable-http
+      - FME_MCP_LOG_LEVEL=INFO
+      - FME_FLOW_ENABLED=${FME_FLOW_ENABLED:-false}
+      - FME_FLOW_URL=${FME_FLOW_URL:-}
+      - FME_FLOW_TOKEN=${FME_FLOW_TOKEN:-}
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

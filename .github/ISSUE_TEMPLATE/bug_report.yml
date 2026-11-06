@@ -1,0 +1,35 @@
+name: Bug Report
+description: Create a report to help us improve fme-mcp-ultra
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please ensure you are not reporting a security vulnerability here (use GitHub Private Vulnerability Reporting instead).
+  - type: input
+    id: version
+    attributes:
+      label: fme-mcp-ultra Version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: fme_version
+    attributes:
+      label: FME Form / Flow Version
+      placeholder: "FME Form 2025.2 (Build 25810)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description & Steps to Reproduce
+      placeholder: "1. Call tool 'fme_run_workspace' with...\n2. Observe error..."
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      render: shell

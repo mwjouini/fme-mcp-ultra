@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "fme-mcp-ultra",
+      "args": [
+        "serve",
+        "--transport",
+        "stdio"
+      ]
+    }
+  }
+}
