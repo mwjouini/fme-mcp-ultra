@@ -1,17 +1,15 @@
 """Unit tests for FME Desktop integration, diagnosis, canvas inspection, and loopback bridge."""
 
-import json
-import pytest
 from pathlib import Path
 
+from fme_mcp_ultra.fme.fme_bridge import FMEBridgeClient, FMEBridgeServer
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
-from fme_mcp_ultra.fme.fme_bridge import FMEBridgeServer, FMEBridgeClient
 from fme_mcp_ultra.tools.workspaces.workspace_tools import (
     fme_diagnose,
     fme_inspect_canvas,
-    fme_preview_dataset,
-    fme_open_in_workbench,
     fme_open_in_inspector,
+    fme_open_in_workbench,
+    fme_preview_dataset,
 )
 
 
@@ -86,7 +84,9 @@ def test_fme_inspect_canvas(tmp_path: Path):
 def test_fme_preview_dataset_csv(tmp_path: Path):
     """Verify preview_dataset returns headers and sample records for CSV."""
     csv_file = tmp_path / "sample.csv"
-    csv_file.write_text("ID,NAME,SCORE\n101,Site Alpha,95.5\n102,Site Beta,88.0\n", encoding="utf-8")
+    csv_file.write_text(
+        "ID,NAME,SCORE\n101,Site Alpha,95.5\n102,Site Beta,88.0\n", encoding="utf-8"
+    )
 
     client_res = fme_form_client.preview_dataset(str(csv_file), limit=5)
     assert client_res["format"] == "Delimited Text"

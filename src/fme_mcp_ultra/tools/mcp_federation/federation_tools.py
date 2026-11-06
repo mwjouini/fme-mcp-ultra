@@ -2,19 +2,20 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 from fme_mcp_ultra.security.ssrf_guard import ssrf_guard
 
-_FEDERATED_SERVERS: Dict[str, Dict[str, Any]] = {}
+_FEDERATED_SERVERS: dict[str, dict[str, Any]] = {}
 
 
 def mcp_register_server(
     server_id: str,
     server_url: str,
     transport: str = "http",
-    auth_token: Optional[str] = None,
-) -> Dict[str, Any]:
+    auth_token: str | None = None,
+) -> dict[str, Any]:
     """Register a remote federated MCP server.
 
     Args:
@@ -38,10 +39,9 @@ def mcp_register_server(
     ).to_dict()
 
 
-def mcp_list_servers() -> Dict[str, Any]:
+def mcp_list_servers() -> dict[str, Any]:
     """List all connected federated MCP servers."""
     return MCPToolResponse(
         success=True,
         data={"count": len(_FEDERATED_SERVERS), "servers": list(_FEDERATED_SERVERS.values())},
     ).to_dict()
-

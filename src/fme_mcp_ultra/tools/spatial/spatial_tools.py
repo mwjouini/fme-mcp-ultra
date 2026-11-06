@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
-from fme_mcp_ultra.security.audit_log import audit_logger
 
 
 def gis_reproject(
@@ -13,7 +13,7 @@ def gis_reproject(
     y: float,
     source_epsg: int = 4326,
     target_epsg: int = 2154,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Reproject 2D coordinates between common coordinate reference systems.
 
     Supports EPSG:4326 (WGS84) to EPSG:2154 (Lambert-93 / RGF93 France) and standard Web Mercator EPSG:3857.
@@ -31,12 +31,16 @@ def gis_reproject(
     if source_epsg == 4326 and target_epsg == 3857:
         r_major = 6378137.0
         out_x = r_major * math.radians(x)
-        scale = x / 180.0
         lat_rad = math.radians(max(min(y, 89.5), -89.5))
         out_y = 3189068.5 * math.log((1.0 + math.sin(lat_rad)) / (1.0 - math.sin(lat_rad)))
         return MCPToolResponse(
             success=True,
-            data={"source_epsg": source_epsg, "target_epsg": target_epsg, "x": round(out_x, 3), "y": round(out_y, 3)},
+            data={
+                "source_epsg": source_epsg,
+                "target_epsg": target_epsg,
+                "x": round(out_x, 3),
+                "y": round(out_y, 3),
+            },
         ).to_dict()
 
     # Closed-form projection for EPSG:4326 -> EPSG:2154 (Lambert-93 approximation)
@@ -71,9 +75,9 @@ def gis_reproject(
         )
 
         n = math.log(m1 / m2) / math.log(t1 / t2)
-        f = m1 / (n * (t1 ** n))
-        rho0 = a * f * (t0 ** n)
-        rho = a * f * (t ** n)
+        f = m1 / (n * (t1**n))
+        rho0 = a * f * (t0**n)
+        rho = a * f * (t**n)
         gamma = n * (lon_rad - lc)
 
         l93_x = x0 + rho * math.sin(gamma)
@@ -81,12 +85,20 @@ def gis_reproject(
 
         return MCPToolResponse(
             success=True,
-            data={"source_epsg": source_epsg, "target_epsg": target_epsg, "x": round(l93_x, 2), "y": round(l93_y, 2)},
+            data={
+                "source_epsg": source_epsg,
+                "target_epsg": target_epsg,
+                "x": round(l93_x, 2),
+                "y": round(l93_y, 2),
+            },
         ).to_dict()
 
     return MCPToolResponse(
         success=False,
-        error={"code": "UNSUPPORTED_CRS", "message": f"Transformation EPSG:{source_epsg} -> EPSG:{target_epsg} requires PROJ or FME Form."},
+        error={
+            "code": "UNSUPPORTED_CRS",
+            "message": f"Transformation EPSG:{source_epsg} -> EPSG:{target_epsg} requires PROJ or FME Form.",
+        },
     ).to_dict()
 
 
@@ -95,7 +107,7 @@ def gis_buffer(
     center_lat: float,
     radius_metres: float,
     num_points: int = 32,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Generate a geographic circular buffer polygon as a standard GeoJSON geometry.
 
     Args:
@@ -136,7 +148,7 @@ def gis_buffer(
     ).to_dict()
 
 
-def gis_validate_geometry(geojson_geometry: Dict[str, Any]) -> Dict[str, Any]:
+def gis_validate_geometry(geojson_geometry: dict[str, Any]) -> dict[str, Any]:
     """Validate a GeoJSON geometry for structural completeness and closed rings.
 
     Args:
@@ -146,7 +158,10 @@ def gis_validate_geometry(geojson_geometry: Dict[str, Any]) -> Dict[str, Any]:
     coords = geojson_geometry.get("coordinates")
 
     if not g_type or coords is None:
-        return MCPToolResponse(success=False, error={"code": "INVALID_GEOJSON", "message": "Missing type or coordinates"}).to_dict()
+        return MCPToolResponse(
+            success=False,
+            error={"code": "INVALID_GEOJSON", "message": "Missing type or coordinates"},
+        ).to_dict()
 
     issues = []
     if g_type == "Polygon":
@@ -157,11 +172,12 @@ def gis_validate_geometry(geojson_geometry: Dict[str, Any]) -> Dict[str, Any]:
             if len(outer_ring) < 4:
                 issues.append("Polygon outer ring must contain at least 4 coordinate positions")
             if outer_ring and outer_ring[0] != outer_ring[-1]:
-                issues.append("Polygon ring is not closed (first vertex does not match last vertex)")
+                issues.append(
+                    "Polygon ring is not closed (first vertex does not match last vertex)"
+                )
 
     is_valid = len(issues) == 0
     return MCPToolResponse(
         success=True,
         data={"type": g_type, "valid": is_valid, "issues": issues},
     ).to_dict()
-

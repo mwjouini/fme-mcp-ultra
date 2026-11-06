@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Union
+from typing import Any
 
 
 class RedactionEngine:
@@ -12,7 +12,13 @@ class RedactionEngine:
     PATTERNS = [
         # Bearer tokens & API Keys
         (re.compile(r"Bearer\s+([A-Za-z0-9_\-\.]{15,})", re.IGNORECASE), "Bearer [REDACTED_TOKEN]"),
-        (re.compile(r"(api[_-]?key|secret|password|token)\s*[:=]\s*['\"]?([^'\"\s]+)['\"]?", re.IGNORECASE), r"\1=[REDACTED]"),
+        (
+            re.compile(
+                r"(api[_-]?key|secret|password|token)\s*[:=]\s*['\"]?([^'\"\s]+)['\"]?",
+                re.IGNORECASE,
+            ),
+            r"\1=[REDACTED]",
+        ),
         # Credit Card numbers (Luhn-like patterns)
         (re.compile(r"\b(?:\d{4}[-\s]?){3}\d{4}\b"), "[REDACTED_CREDIT_CARD]"),
         # Email addresses
@@ -42,4 +48,3 @@ class RedactionEngine:
 
 
 redaction_engine = RedactionEngine()
-

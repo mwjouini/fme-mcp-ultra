@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import List, Optional
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -25,25 +22,40 @@ console = Console()
 
 @cli.command()
 def serve(
-    transport: str = typer.Option("stdio", "--transport", "-t", help="MCP transport: stdio, sse, streamable-http"),
+    transport: str = typer.Option(
+        "stdio", "--transport", "-t", help="MCP transport: stdio, sse, streamable-http"
+    ),
     host: str = typer.Option(settings.host, "--host", "-h", help="Host address for HTTP/SSE"),
     port: int = typer.Option(settings.port, "--port", "-p", help="Port for HTTP/SSE"),
 ) -> None:
     """Launch the fme-mcp-ultra server."""
     if transport == "stdio":
         mcp_server.run(transport="stdio")
-    elif transport in ("sse", "streamable-http"):
-        console.print(f"[bold green]Starting fme-mcp-ultra {transport} server on {host}:{port}[/bold green]")
-        mcp_server.run(transport=transport, host=host, port=port)
+    elif transport == "sse":
+        console.print(
+            f"[bold green]Starting fme-mcp-ultra sse server on {host}:{port}[/bold green]"
+        )
+        mcp_server.run(transport="sse", host=host, port=port)
+    elif transport == "streamable-http":
+        console.print(
+            f"[bold green]Starting fme-mcp-ultra streamable-http server on {host}:{port}[/bold green]"
+        )
+        mcp_server.run(transport="streamable-http", host=host, port=port)
     else:
-        console.print(f"[bold red]Unknown transport '{transport}'. Use stdio, sse, or streamable-http.[/bold red]")
+        console.print(
+            f"[bold red]Unknown transport '{transport}'. Use stdio, sse, or streamable-http.[/bold red]"
+        )
         raise typer.Exit(code=1)
 
 
 @cli.command()
 def doctor() -> None:
     """Diagnose FME Form, fmeobjects bindings, and environment readiness."""
-    console.print(Panel.fit("[bold blue]fme-mcp-ultra Environment Diagnostic[/bold blue]", border_style="blue"))
+    console.print(
+        Panel.fit(
+            "[bold blue]fme-mcp-ultra Environment Diagnostic[/bold blue]", border_style="blue"
+        )
+    )
 
     table = Table(title="Diagnostic Checks")
     table.add_column("Component", style="cyan")
@@ -56,17 +68,25 @@ def doctor() -> None:
     # 2. FME Form Local Detection
     info = fme_form_client.get_info()
     if info.get("installed"):
-        table.add_row("FME Form", "[bold green]DETECTED[/bold green]", info.get("Version", "FME Form"))
+        table.add_row(
+            "FME Form", "[bold green]DETECTED[/bold green]", info.get("Version", "FME Form")
+        )
         table.add_row("fme.exe Path", "OK", info.get("fme_executable", ""))
         table.add_row("Licence", "OK", info.get("Registration", ""))
     else:
-        table.add_row("FME Form", "[bold red]NOT FOUND[/bold red]", "fme.exe not detected in standard paths")
+        table.add_row(
+            "FME Form", "[bold red]NOT FOUND[/bold red]", "fme.exe not detected in standard paths"
+        )
 
     # 3. fmeobjects C-API
     if info.get("fmeobjects_loaded"):
-        table.add_row("fmeobjects API", "[bold green]BOUND[/bold green]", "C-extension loaded successfully")
+        table.add_row(
+            "fmeobjects API", "[bold green]BOUND[/bold green]", "C-extension loaded successfully"
+        )
     else:
-        table.add_row("fmeobjects API", "[bold yellow]FALLBACK[/bold yellow]", "Using subprocess CLI fallback")
+        table.add_row(
+            "fmeobjects API", "[bold yellow]FALLBACK[/bold yellow]", "Using subprocess CLI fallback"
+        )
 
     # 4. FME Flow Configuration
     flow_cfg = bool(settings.fme_flow_url and settings.fme_flow_token)
@@ -112,7 +132,7 @@ def inspect(
 
     except Exception as e:
         console.print(f"[bold red]Inspection error: {e}[/bold red]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from e
 
 
 @cli.command()
@@ -123,4 +143,3 @@ def version() -> None:
 
 if __name__ == "__main__":
     cli()
-

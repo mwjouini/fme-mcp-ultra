@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class FMEMCPError(Exception):
@@ -12,14 +12,14 @@ class FMEMCPError(Exception):
         self,
         message: str,
         code: str = "INTERNAL_ERROR",
-        details: Optional[Dict[str, Any]] = None,
+        details: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
         self.code = code
         self.details = details or {}
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert exception to structured dictionary format."""
         return {
             "code": self.code,
@@ -31,7 +31,9 @@ class FMEMCPError(Exception):
 class SecurityError(FMEMCPError):
     """Raised when a security guard or authorisation check fails."""
 
-    def __init__(self, message: str, code: str = "SECURITY_VIOLATION", details: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, message: str, code: str = "SECURITY_VIOLATION", details: dict[str, Any] | None = None
+    ):
         super().__init__(message, code=code, details=details)
 
 
@@ -60,12 +62,19 @@ class WorkspaceNotFoundError(FMEMCPError):
     """Raised when an FME workspace cannot be found."""
 
     def __init__(self, workspace_path: str):
-        super().__init__(f"Workspace not found: {workspace_path}", code="WORKSPACE_NOT_FOUND", details={"path": workspace_path})
+        super().__init__(
+            f"Workspace not found: {workspace_path}",
+            code="WORKSPACE_NOT_FOUND",
+            details={"path": workspace_path},
+        )
 
 
 class WorkspaceExecutionError(FMEMCPError):
     """Raised when an FME workspace execution fails."""
 
-    def __init__(self, message: str, exit_code: int = 1, log_summary: Optional[Dict[str, Any]] = None):
-        super().__init__(message, code="WORKSPACE_EXECUTION_FAILED", details={"exit_code": exit_code, "log_summary": log_summary})
-
+    def __init__(self, message: str, exit_code: int = 1, log_summary: dict[str, Any] | None = None):
+        super().__init__(
+            message,
+            code="WORKSPACE_EXECUTION_FAILED",
+            details={"exit_code": exit_code, "log_summary": log_summary},
+        )

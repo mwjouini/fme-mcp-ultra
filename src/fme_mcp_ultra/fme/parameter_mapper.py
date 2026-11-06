@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
 def map_fme_param_to_json_schema(
@@ -11,11 +11,11 @@ def map_fme_param_to_json_schema(
     default_value: Any = None,
     label: str = "",
     optional: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Convert an FME published parameter into an OpenAPI/JSON Schema property."""
     fme_type = (param_type or "").upper()
 
-    schema: Dict[str, Any] = {
+    schema: dict[str, Any] = {
         "title": label or param_name,
         "description": f"FME Published Parameter ({fme_type})" + (f": {label}" if label else ""),
     }
@@ -38,4 +38,3 @@ def map_fme_param_to_json_schema(
         schema["type"] = "string"
 
     return schema
-

@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
 
 
-def ai_explain_workspace(workspace_path: str) -> Dict[str, Any]:
+def ai_explain_workspace(workspace_path: str) -> dict[str, Any]:
     """Generate an architectural summary of what an FME workspace does based on its readers, writers, and transformers.
 
     Args:
@@ -36,7 +37,9 @@ def ai_explain_workspace(workspace_path: str) -> Dict[str, Any]:
     ).to_dict()
 
 
-def ai_suggest_transformations(source_format: str, destination_format: str, objective: str) -> Dict[str, Any]:
+def ai_suggest_transformations(
+    source_format: str, destination_format: str, objective: str
+) -> dict[str, Any]:
     """Recommend optimal FME transformers and geometric operations for a data pipeline objective.
 
     Args:
@@ -48,18 +51,48 @@ def ai_suggest_transformations(source_format: str, destination_format: str, obje
     obj_l = objective.lower()
 
     if "buffer" in obj_l:
-        suggestions.append({"transformer": "Bufferer", "role": "Calculates geometric buffer zones around points/lines/polygons."})
+        suggestions.append(
+            {
+                "transformer": "Bufferer",
+                "role": "Calculates geometric buffer zones around points/lines/polygons.",
+            }
+        )
     if "reproject" in obj_l or "coordinate" in obj_l:
-        suggestions.append({"transformer": "CsmapReprojector", "role": "Reprojects coordinates between national and global CRS."})
+        suggestions.append(
+            {
+                "transformer": "CsmapReprojector",
+                "role": "Reprojects coordinates between national and global CRS.",
+            }
+        )
     if "filter" in obj_l or "test" in obj_l:
-        suggestions.append({"transformer": "Tester", "role": "Filters features based on attribute values and relational comparisons."})
+        suggestions.append(
+            {
+                "transformer": "Tester",
+                "role": "Filters features based on attribute values and relational comparisons.",
+            }
+        )
     if "join" in obj_l or "merge" in obj_l:
-        suggestions.append({"transformer": "FeatureJoiner", "role": "Performs relational joins on shared attribute keys."})
+        suggestions.append(
+            {
+                "transformer": "FeatureJoiner",
+                "role": "Performs relational joins on shared attribute keys.",
+            }
+        )
     if "spatial" in obj_l or "intersect" in obj_l:
-        suggestions.append({"transformer": "SpatialFilter", "role": "Performs geometric spatial queries (within, intersects, contains)."})
+        suggestions.append(
+            {
+                "transformer": "SpatialFilter",
+                "role": "Performs geometric spatial queries (within, intersects, contains).",
+            }
+        )
 
     if not suggestions:
-        suggestions.append({"transformer": "AttributeManager", "role": "Manages, renames, creates, and strips dataset attributes."})
+        suggestions.append(
+            {
+                "transformer": "AttributeManager",
+                "role": "Manages, renames, creates, and strips dataset attributes.",
+            }
+        )
 
     return MCPToolResponse(
         success=True,
@@ -69,4 +102,3 @@ def ai_suggest_transformations(source_format: str, destination_format: str, obje
             "recommended_transformers": suggestions,
         },
     ).to_dict()
-

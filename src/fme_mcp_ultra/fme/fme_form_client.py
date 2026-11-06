@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import re
@@ -9,10 +10,10 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fme_mcp_ultra.core.config import settings
-from fme_mcp_ultra.core.errors import FMEMCPError, WorkspaceExecutionError, WorkspaceNotFoundError
+from fme_mcp_ultra.core.errors import WorkspaceExecutionError, WorkspaceNotFoundError
 from fme_mcp_ultra.core.logging import get_logger
 from fme_mcp_ultra.security.command_guard import command_guard
 from fme_mcp_ultra.security.path_guard import path_guard
@@ -23,12 +24,12 @@ logger = get_logger("fme-form-client")
 class FMEFormClient:
     """Manages local execution of FME Form workspaces via CLI and fmeobjects."""
 
-    def __init__(self, fme_dir: Optional[str] = None) -> None:
+    def __init__(self, fme_dir: str | None = None) -> None:
         self.fme_dir = self._locate_fme_dir(fme_dir)
         self.fme_exe = self.fme_dir / ("fme.exe" if sys.platform == "win32" else "fme")
         self._fmeobjects_available = self._init_fmeobjects()
 
-    def _locate_fme_dir(self, override_dir: Optional[str]) -> Path:
+    def _locate_fme_dir(self, override_dir: str | None) -> Path:
         """Find FME installation directory."""
         if override_dir and Path(override_dir).exists():
             return Path(override_dir)
@@ -61,14 +62,13 @@ class FMEFormClient:
             py_dir = self.fme_dir / "python"
             if py_dir.exists() and str(py_dir) not in sys.path:
                 sys.path.insert(0, str(py_dir))
-            import fmeobjects  # type: ignore
 
             return True
         except Exception as e:
             logger.debug(f"fmeobjects C-binding could not be initialised: {e}")
             return False
 
-    def get_info(self) -> Dict[str, Any]:
+    def get_info(self) -> dict[str, Any]:
         """Query FME Form build, licensing, and environment information."""
         if not self.fme_exe.exists():
             return {
@@ -78,8 +78,10 @@ class FMEFormClient:
             }
 
         cmd = command_guard.validate_command([str(self.fme_exe), "INFO", "JSON"])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-        data: Dict[str, Any] = {}
+        res = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace"
+        )
+        data: dict[str, Any] = {}
         if res.returncode == 0:
             try:
                 txt = res.stdout.strip()
@@ -94,13 +96,13 @@ class FMEFormClient:
         data["fmeobjects_loaded"] = self._fmeobjects_available
         return data
 
-    def inspect_workspace(self, workspace_path: str) -> Dict[str, Any]:
+    def inspect_workspace(self, workspace_path: str) -> dict[str, Any]:
         """Inspect workspace metadata, published parameters, transformers, readers, and writers."""
         validated_path = path_guard.validate_path(workspace_path, must_exist=True)
         if not validated_path.exists():
             raise WorkspaceNotFoundError(str(validated_path))
 
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "workspace_path": str(validated_path),
             "file_name": validated_path.name,
             "size_bytes": validated_path.stat().st_size,
@@ -145,7 +147,7 @@ class FMEFormClient:
             tf_types = re.findall(r'<TRANSFORMER[\s\S]*?TYPE="([^"]+)"[\s\S]*?>', content)
             if not tf_types:
                 tf_types = re.findall(r"TRANSFORMER_NAME\s+([A-Za-z0-9_]+)", content)
-            counts: Dict[str, int] = {}
+            counts: dict[str, int] = {}
             for t in tf_types:
                 counts[t] = counts.get(t, 0) + 1
             result["transformers"] = [{"name": k, "count": v} for k, v in sorted(counts.items())]
@@ -162,8 +164,8 @@ class FMEFormClient:
                         readers.add(fmt)
                     elif role == "WRITER":
                         writers.add(fmt)
-            result["readers"] = sorted(list(readers))
-            result["writers"] = sorted(list(writers))
+            result["readers"] = sorted(readers)
+            result["writers"] = sorted(writers)
         except Exception as e:
             result["parse_error"] = str(e)
 
@@ -172,10 +174,10 @@ class FMEFormClient:
     def run_workspace(
         self,
         workspace_path: str,
-        parameters: Optional[Dict[str, Any]] = None,
-        log_file: Optional[str] = None,
-        timeout_seconds: Optional[int] = None,
-    ) -> Dict[str, Any]:
+        parameters: dict[str, Any] | None = None,
+        log_file: str | None = None,
+        timeout_seconds: int | None = None,
+    ) -> dict[str, Any]:
         """Execute a workspace with parameters using fme.exe."""
         validated_path = path_guard.validate_path(workspace_path, must_exist=True)
         timeout = timeout_seconds or settings.fme_timeout_seconds
@@ -221,14 +223,14 @@ class FMEFormClient:
                 "log_summary": log_summary,
                 "stdout_tail": "\n".join(proc.stdout.splitlines()[-15:]),
             }
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as e:
             raise WorkspaceExecutionError(
                 f"Workspace execution timed out after {timeout} seconds",
                 exit_code=-1,
                 log_summary={"status": "TIMED_OUT"},
-            )
+            ) from e
 
-    def _parse_log_summary(self, log_path: Path) -> Dict[str, Any]:
+    def _parse_log_summary(self, log_path: Path) -> dict[str, Any]:
         """Parse execution log summary."""
         try:
             text = log_path.read_text(encoding="utf-8", errors="replace")
@@ -239,17 +241,17 @@ class FMEFormClient:
         errors, warnings, stats = [], [], []
         successful, failed = False, False
 
-        for l in lines:
-            if "Translation was SUCCESSFUL" in l:
+        for line in lines:
+            if "Translation was SUCCESSFUL" in line:
                 successful = True
-            elif "Translation FAILED" in l or "Program Terminating" in l:
+            elif "Translation FAILED" in line or "Program Terminating" in line:
                 failed = True
-            elif "|ERROR |" in l or "|ERROR|" in l:
-                errors.append(l.strip())
-            elif "|WARN  |" in l or "|WARN |" in l:
-                warnings.append(l.strip())
-            elif "|INFORM|Features Read" in l or "|INFORM|Features Written" in l:
-                stats.append(l.strip())
+            elif "|ERROR |" in line or "|ERROR|" in line:
+                errors.append(line.strip())
+            elif "|WARN  |" in line or "|WARN |" in line:
+                warnings.append(line.strip())
+            elif "|INFORM|Features Read" in line or "|INFORM|Features Written" in line:
+                stats.append(line.strip())
 
         status = "SUCCESS" if successful else ("FAILED" if failed else "UNKNOWN")
         return {
@@ -261,20 +263,22 @@ class FMEFormClient:
             "stats": stats,
         }
 
-    def list_transformers(self, search: Optional[str] = None) -> List[str]:
+    def list_transformers(self, search: str | None = None) -> list[str]:
         """List available transformers."""
         if not self.fme_exe.exists():
             return []
         cmd = command_guard.validate_command([str(self.fme_exe), "LIST_TRANSFORMERS"])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        res = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace"
+        )
         if res.returncode != 0:
             return []
 
         lines = res.stdout.splitlines()
-        transformers: List[str] = []
+        transformers: list[str] = []
         capture = False
-        for l in lines:
-            clean = l.strip()
+        for line in lines:
+            clean = line.strip()
             if not clean:
                 continue
             if "Safe Software Inc." in clean:
@@ -291,12 +295,16 @@ class FMEFormClient:
 
         return sorted(transformers)
 
-    def list_packages(self) -> List[Dict[str, Any]]:
+    def list_packages(self) -> list[dict[str, Any]]:
         """List installed FME Hub packages."""
         if not self.fme_exe.exists():
             return []
-        cmd = command_guard.validate_command([str(self.fme_exe), "PACKAGE", "LIST", "--format", "json"])
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        cmd = command_guard.validate_command(
+            [str(self.fme_exe), "PACKAGE", "LIST", "--format", "json"]
+        )
+        res = subprocess.run(
+            cmd, capture_output=True, text=True, encoding="utf-8", errors="replace"
+        )
         if res.returncode != 0:
             return []
         txt = res.stdout
@@ -310,7 +318,7 @@ class FMEFormClient:
                 pass
         return []
 
-    def execute_python(self, code: str, timeout_seconds: int = 120) -> Dict[str, Any]:
+    def execute_python(self, code: str, timeout_seconds: int = 120) -> dict[str, Any]:
         """Execute arbitrary Python script in FME Form's embedded Python runtime."""
         import tempfile
 
@@ -338,19 +346,19 @@ class FMEFormClient:
                 "stderr": res.stderr,
             }
         finally:
-            try:
+            with contextlib.suppress(OSError):
                 os.remove(temp_py)
-            except OSError:
-                pass
 
-    def open_in_workbench(self, workspace_path: str) -> Dict[str, Any]:
+    def open_in_workbench(self, workspace_path: str) -> dict[str, Any]:
         """Launch FME Workbench GUI with the specified workspace."""
         try:
             validated_path = path_guard.validate_path(workspace_path, must_exist=True)
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-        workbench_exe = self.fme_dir / ("fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench")
+        workbench_exe = self.fme_dir / (
+            "fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench"
+        )
         if not workbench_exe.exists():
             return {
                 "success": False,
@@ -373,14 +381,16 @@ class FMEFormClient:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def open_in_inspector(self, dataset_path: str) -> Dict[str, Any]:
+    def open_in_inspector(self, dataset_path: str) -> dict[str, Any]:
         """Launch FME Data Inspector GUI with the specified dataset."""
         try:
             validated_path = path_guard.validate_path(dataset_path, must_exist=True)
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-        inspector_exe = self.fme_dir / ("fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector")
+        inspector_exe = self.fme_dir / (
+            "fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector"
+        )
         if not inspector_exe.exists():
             return {
                 "success": False,
@@ -402,12 +412,15 @@ class FMEFormClient:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    def diagnose(self) -> Dict[str, Any]:
+    def diagnose(self) -> dict[str, Any]:
         """Deep system and environment diagnostic for FME Form & Flow (inspired by qgis-mcp)."""
-        import xml.etree.ElementTree as ET
 
-        workbench_exe = self.fme_dir / ("fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench")
-        inspector_exe = self.fme_dir / ("fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector")
+        workbench_exe = self.fme_dir / (
+            "fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench"
+        )
+        inspector_exe = self.fme_dir / (
+            "fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector"
+        )
 
         info = self.get_info()
 
@@ -448,7 +461,7 @@ class FMEFormClient:
             "bridge_active": True,
         }
 
-    def inspect_canvas(self, workspace_path: str) -> Dict[str, Any]:
+    def inspect_canvas(self, workspace_path: str) -> dict[str, Any]:
         """Extract structured visual canvas graph (nodes, transformers, links, unconnected ports)."""
         import xml.etree.ElementTree as ET
 
@@ -459,7 +472,7 @@ class FMEFormClient:
 
         xml_lines = []
         in_workspace = False
-        with open(validated_path, "r", encoding="utf-8", errors="ignore") as f:
+        with open(validated_path, encoding="utf-8", errors="ignore") as f:
             for line in f:
                 if line.startswith("#! <?xml"):
                     in_workspace = True
@@ -475,7 +488,7 @@ class FMEFormClient:
             return {"error": "Could not find #! <WORKSPACE> XML block in file."}
 
         try:
-            root = ET.fromstring("".join(xml_lines))
+            root = ET.fromstring("".join(xml_lines))  # nosec B314
         except Exception as e:
             return {"error": f"XML parse error: {e}"}
 
@@ -514,25 +527,25 @@ class FMEFormClient:
             )
 
         links = []
-        for l in root.findall(".//FEAT_LINK"):
+        for link in root.findall(".//FEAT_LINK"):
             links.append(
                 {
-                    "id": l.get("IDENTIFIER", ""),
-                    "source_node": l.get("SOURCE_NODE", ""),
-                    "source_port": l.get("SOURCE_PORT_DESC", ""),
-                    "target_node": l.get("TARGET_NODE", ""),
-                    "target_port": l.get("TARGET_PORT_DESC", ""),
-                    "enabled": l.get("ENABLED", "true") == "true",
+                    "id": link.get("IDENTIFIER", ""),
+                    "source_node": link.get("SOURCE_NODE", ""),
+                    "source_port": link.get("SOURCE_PORT_DESC", ""),
+                    "target_node": link.get("TARGET_NODE", ""),
+                    "target_port": link.get("TARGET_PORT_DESC", ""),
+                    "enabled": link.get("ENABLED", "true") == "true",
                 }
             )
 
         # Detect unconnected output ports
-        connected_source_nodes = {l["source_node"] for l in links}
+        connected_source_nodes = {str(lk["source_node"]) for lk in links}
         unconnected_warnings = []
-        for t in transformers:
-            if t["id"] not in connected_source_nodes:
+        for tr in transformers:
+            if tr["id"] not in connected_source_nodes:
                 unconnected_warnings.append(
-                    f"Transformer '{t['name']}' (ID {t['id']}) has no connected outgoing ports."
+                    f"Transformer '{tr['name']}' (ID {tr['id']}) has no connected outgoing ports."
                 )
 
         return {
@@ -546,7 +559,7 @@ class FMEFormClient:
             "canvas_warnings": unconnected_warnings,
         }
 
-    def preview_dataset(self, dataset_path: str, limit: int = 10) -> Dict[str, Any]:
+    def preview_dataset(self, dataset_path: str, limit: int = 10) -> dict[str, Any]:
         """Read and preview features from any dataset produced or consumed by FME."""
         try:
             validated_path = path_guard.validate_path(dataset_path, must_exist=True)
@@ -561,7 +574,9 @@ class FMEFormClient:
 
             conn = sqlite3.connect(str(validated_path))
             cursor = conn.cursor()
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'gpkg_%' AND name NOT LIKE 'rtree_%'")
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'gpkg_%' AND name NOT LIKE 'rtree_%'"
+            )
             tables = [r[0] for r in cursor.fetchall()]
             if not tables:
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
@@ -571,17 +586,23 @@ class FMEFormClient:
             if not table_name:
                 return {"dataset": validated_path.name, "tables": [], "features": []}
 
-            cursor.execute(f"PRAGMA table_info('{table_name}')")
+            clean_table = re.sub(r"[^\w]", "", table_name)
+            cursor.execute(f"PRAGMA table_info('{clean_table}')")  # nosec B608
             cols = [r[1] for r in cursor.fetchall()]
 
-            cursor.execute(f"SELECT COUNT(*) FROM '{table_name}'")
+            cursor.execute(f"SELECT COUNT(*) FROM '{clean_table}'")  # nosec B608
             total_count = cursor.fetchone()[0]
 
-            cursor.execute(f"SELECT * FROM '{table_name}' LIMIT {limit}")
+            cursor.execute(f"SELECT * FROM '{clean_table}' LIMIT {int(limit)}")  # nosec B608
             rows = cursor.fetchall()
             features = []
             for r in rows:
-                features.append({cols[i]: (f"<geometry bytes>" if isinstance(r[i], bytes) else r[i]) for i in range(len(cols))})
+                features.append(
+                    {
+                        cols[i]: ("<geometry bytes>" if isinstance(r[i], bytes) else r[i])
+                        for i in range(len(cols))
+                    }
+                )
 
             conn.close()
             return {
@@ -598,14 +619,14 @@ class FMEFormClient:
         if ext in (".csv", ".tsv", ".txt"):
             import csv
 
-            with open(validated_path, "r", encoding="utf-8", errors="replace") as f:
+            with open(validated_path, encoding="utf-8", errors="replace") as f:
                 reader = csv.reader(f, delimiter=";" if ";" in f.readline() else ",")
                 f.seek(0)
                 rows = [r for idx, r in enumerate(reader) if idx < limit + 1]
 
             headers = rows[0] if rows else []
             data_rows = rows[1:] if len(rows) > 1 else []
-            features = [dict(zip(headers, r)) for r in data_rows]
+            features = [dict(zip(headers, r, strict=False)) for r in data_rows]
             return {
                 "dataset": validated_path.name,
                 "format": "Delimited Text",
@@ -617,13 +638,15 @@ class FMEFormClient:
         # Preview Excel
         if ext in (".xlsx", ".xls"):
             try:
-                import openpyxl
+                import openpyxl  # type: ignore
 
                 wb = openpyxl.load_workbook(str(validated_path), read_only=True)
                 ws = wb.active
                 rows = list(ws.iter_rows(values_only=True, max_row=limit + 1))
                 headers = [str(c or "") for c in rows[0]] if rows else []
-                features = [dict(zip(headers, r)) for r in rows[1:]] if len(rows) > 1 else []
+                features = (
+                    [dict(zip(headers, r, strict=False)) for r in rows[1:]] if len(rows) > 1 else []
+                )
                 return {
                     "dataset": validated_path.name,
                     "format": "Microsoft Excel",
@@ -640,4 +663,3 @@ class FMEFormClient:
 
 # Global singleton client
 fme_form_client = FMEFormClient()
-

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Sequence
+
 from fme_mcp_ultra.core.errors import CommandInjectionError
 
 
@@ -15,7 +16,7 @@ class CommandGuard:
     FORBIDDEN_CHARS = re.compile(r"[;&|`$><\r\n]")
 
     @classmethod
-    def validate_command(cls, cmd: Sequence[str]) -> List[str]:
+    def validate_command(cls, cmd: Sequence[str]) -> list[str]:
         """Validate command list before subprocess execution.
 
         Args:
@@ -38,7 +39,7 @@ class CommandGuard:
                 f"Binary '{binary_name}' is not in the authorised execution allowlist."
             )
 
-        sanitised: List[str] = []
+        sanitised: list[str] = []
         for arg in cmd:
             if not isinstance(arg, str):
                 arg = str(arg)
@@ -54,4 +55,3 @@ class CommandGuard:
 
 
 command_guard = CommandGuard()
-

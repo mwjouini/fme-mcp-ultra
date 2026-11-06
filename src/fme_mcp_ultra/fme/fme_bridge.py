@@ -7,11 +7,13 @@ loopback socket (127.0.0.1:9877).
 
 from __future__ import annotations
 
+import contextlib
 import json
 import socket
 import threading
 import time
-from typing import Any, Callable, Dict, Optional
+from collections.abc import Callable
+from typing import Any
 
 from fme_mcp_ultra.core.logging import get_logger
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
@@ -29,9 +31,9 @@ class FMEBridgeServer:
         self.host = host
         self.port = port
         self.running = False
-        self._server_sock: Optional[socket.socket] = None
-        self._thread: Optional[threading.Thread] = None
-        self._handlers: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {
+        self._server_sock: socket.socket | None = None
+        self._thread: threading.Thread | None = None
+        self._handlers: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
             "ping": self._handle_ping,
             "diagnose": self._handle_diagnose,
             "inspect_canvas": self._handle_inspect_canvas,
@@ -60,17 +62,17 @@ class FMEBridgeServer:
         """Stop the loopback server."""
         self.running = False
         if self._server_sock:
-            try:
+            with contextlib.suppress(Exception):
                 self._server_sock.close()
-            except Exception:
-                pass
         logger.info("FME Live Bridge server stopped.")
 
     def _accept_loop(self) -> None:
         while self.running and self._server_sock:
             try:
                 client_sock, addr = self._server_sock.accept()
-                threading.Thread(target=self._handle_client, args=(client_sock,), daemon=True).start()
+                threading.Thread(
+                    target=self._handle_client, args=(client_sock,), daemon=True
+                ).start()
             except Exception:
                 break
 
@@ -95,30 +97,30 @@ class FMEBridgeServer:
                 client_sock.sendall(json.dumps(response).encode("utf-8"))
             except Exception as e:
                 err_resp = {"status": "ERROR", "error": str(e)}
-                try:
+                with contextlib.suppress(Exception):
                     client_sock.sendall(json.dumps(err_resp).encode("utf-8"))
-                except Exception:
-                    pass
 
-    def _handle_ping(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_ping(self, params: dict[str, Any]) -> dict[str, Any]:
         return {"pong": True, "timestamp": time.time()}
 
-    def _handle_diagnose(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_diagnose(self, params: dict[str, Any]) -> dict[str, Any]:
         return fme_form_client.diagnose()
 
-    def _handle_inspect_canvas(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_inspect_canvas(self, params: dict[str, Any]) -> dict[str, Any]:
         return fme_form_client.inspect_canvas(params.get("workspace_path", ""))
 
-    def _handle_open_workbench(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_open_workbench(self, params: dict[str, Any]) -> dict[str, Any]:
         return fme_form_client.open_in_workbench(params.get("workspace_path", ""))
 
-    def _handle_open_inspector(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_open_inspector(self, params: dict[str, Any]) -> dict[str, Any]:
         return fme_form_client.open_in_inspector(params.get("dataset_path", ""))
 
-    def _handle_preview_dataset(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        return fme_form_client.preview_dataset(params.get("dataset_path", ""), params.get("limit", 10))
+    def _handle_preview_dataset(self, params: dict[str, Any]) -> dict[str, Any]:
+        return fme_form_client.preview_dataset(
+            params.get("dataset_path", ""), params.get("limit", 10)
+        )
 
-    def _handle_execute_code(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _handle_execute_code(self, params: dict[str, Any]) -> dict[str, Any]:
         return fme_form_client.execute_python(params.get("code", ""))
 
 
@@ -137,7 +139,9 @@ class FMEBridgeClient:
         except Exception:
             return False
 
-    def send_command(self, command: str, params: Optional[Dict[str, Any]] = None, timeout: float = 30.0) -> Dict[str, Any]:
+    def send_command(
+        self, command: str, params: dict[str, Any] | None = None, timeout: float = 30.0
+    ) -> dict[str, Any]:
         """Send command over loopback socket and return parsed response."""
         req = {"command": command, "params": params or {}}
         with socket.create_connection((self.host, self.port), timeout=timeout) as sock:
@@ -149,4 +153,3 @@ class FMEBridgeClient:
 # Global singleton instances
 fme_bridge_server = FMEBridgeServer()
 fme_bridge_client = FMEBridgeClient()
-

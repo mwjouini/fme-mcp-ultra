@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import csv
 import json
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 from fme_mcp_ultra.security.path_guard import path_guard
 
 
-def data_read_metadata(dataset_path: str) -> Dict[str, Any]:
+def data_read_metadata(dataset_path: str) -> dict[str, Any]:
     """Extract metadata, file size, line counts, and format characteristics of a dataset.
 
     Args:
@@ -20,7 +20,7 @@ def data_read_metadata(dataset_path: str) -> Dict[str, Any]:
     stat = path.stat()
 
     ext = path.suffix.lower()
-    meta: Dict[str, Any] = {
+    meta: dict[str, Any] = {
         "file_name": path.name,
         "extension": ext,
         "size_bytes": stat.st_size,
@@ -28,14 +28,14 @@ def data_read_metadata(dataset_path: str) -> Dict[str, Any]:
     }
 
     if ext in (".csv", ".tsv"):
-        with open(path, "r", encoding="utf-8", errors="replace") as f:
+        with open(path, encoding="utf-8", errors="replace") as f:
             reader = csv.reader(f)
             header = next(reader, None)
             meta["columns"] = header or []
             line_count = 1 + sum(1 for _ in f)
             meta["estimated_records"] = line_count - 1
     elif ext == ".geojson":
-        with open(path, "r", encoding="utf-8", errors="replace") as f:
+        with open(path, encoding="utf-8", errors="replace") as f:
             try:
                 data = json.load(f)
                 meta["geojson_type"] = data.get("type")
@@ -49,7 +49,7 @@ def data_read_metadata(dataset_path: str) -> Dict[str, Any]:
     return MCPToolResponse(success=True, data=meta).to_dict()
 
 
-def data_profile(dataset_path: str, max_rows: int = 1000) -> Dict[str, Any]:
+def data_profile(dataset_path: str, max_rows: int = 1000) -> dict[str, Any]:
     """Profile tabular data (completeness, null counts, distinct values) up to max_rows.
 
     Args:
@@ -60,42 +60,46 @@ def data_profile(dataset_path: str, max_rows: int = 1000) -> Dict[str, Any]:
     if path.suffix.lower() not in (".csv", ".tsv"):
         return MCPToolResponse(
             success=False,
-            error={"code": "UNSUPPORTED_FORMAT", "message": "Only CSV/TSV profiling currently supported natively"},
+            error={
+                "code": "UNSUPPORTED_FORMAT",
+                "message": "Only CSV/TSV profiling currently supported natively",
+            },
         ).to_dict()
 
-    with open(path, "r", encoding="utf-8", errors="replace") as f:
+    with open(path, encoding="utf-8", errors="replace") as f:
         reader = csv.DictReader(f)
         if not reader.fieldnames:
             return MCPToolResponse(success=True, data={"columns": []}).to_dict()
 
-        columns = {col: {"total": 0, "nulls": 0, "unique_values": set()} for col in reader.fieldnames}
+        total_counts = {col: 0 for col in reader.fieldnames}
+        null_counts = {col: 0 for col in reader.fieldnames}
+        unique_vals: dict[str, set[str]] = {col: set() for col in reader.fieldnames}
         row_count = 0
         for row in reader:
             row_count += 1
             for k, v in row.items():
-                if k in columns:
-                    columns[k]["total"] += 1
+                if k in total_counts:
+                    total_counts[k] += 1
                     if v is None or v.strip() == "":
-                        columns[k]["nulls"] += 1
+                        null_counts[k] += 1
                     else:
-                        if len(columns[k]["unique_values"]) < 100:
-                            columns[k]["unique_values"].add(v)
+                        if len(unique_vals[k]) < 100:
+                            unique_vals[k].add(v)
             if row_count >= max_rows:
                 break
 
     profile_summary = {}
-    for col, stats in columns.items():
-        total = stats["total"]
-        nulls = stats["nulls"]
+    for col in total_counts:
+        tot = total_counts[col]
+        nul = null_counts[col]
         profile_summary[col] = {
-            "sampled_records": total,
-            "null_count": nulls,
-            "completeness_pct": round((total - nulls) / total * 100, 2) if total else 0.0,
-            "approx_distinct_count": len(stats["unique_values"]),
+            "sampled_records": tot,
+            "null_count": nul,
+            "completeness_pct": round((tot - nul) / tot * 100, 2) if tot else 0.0,
+            "approx_distinct_count": len(unique_vals[col]),
         }
 
     return MCPToolResponse(
         success=True,
         data={"rows_analysed": row_count, "columns": profile_summary},
     ).to_dict()
-

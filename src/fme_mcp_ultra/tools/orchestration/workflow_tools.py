@@ -3,18 +3,19 @@
 from __future__ import annotations
 
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 
-_WORKFLOWS_STORE: Dict[str, Dict[str, Any]] = {}
-_RUNS_STORE: Dict[str, Dict[str, Any]] = {}
+_WORKFLOWS_STORE: dict[str, dict[str, Any]] = {}
+_RUNS_STORE: dict[str, dict[str, Any]] = {}
 
 
 def workflow_create(
     name: str,
-    steps: List[Dict[str, Any]],
+    steps: list[dict[str, Any]],
     description: str = "",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Define a multi-step execution workflow DAG chaining FME workspaces and validation checks.
 
     Args:
@@ -33,7 +34,7 @@ def workflow_create(
     return MCPToolResponse(success=True, data=record).to_dict()
 
 
-def workflow_get(workflow_id: str) -> Dict[str, Any]:
+def workflow_get(workflow_id: str) -> dict[str, Any]:
     """Retrieve details and step graph of a defined workflow.
 
     Args:
@@ -41,11 +42,14 @@ def workflow_get(workflow_id: str) -> Dict[str, Any]:
     """
     wf = _WORKFLOWS_STORE.get(workflow_id)
     if not wf:
-        return MCPToolResponse(success=False, error={"code": "WORKFLOW_NOT_FOUND", "message": f"Workflow {workflow_id} not found"}).to_dict()
+        return MCPToolResponse(
+            success=False,
+            error={"code": "WORKFLOW_NOT_FOUND", "message": f"Workflow {workflow_id} not found"},
+        ).to_dict()
     return MCPToolResponse(success=True, data=wf).to_dict()
 
 
-def workflow_run(workflow_id: str) -> Dict[str, Any]:
+def workflow_run(workflow_id: str) -> dict[str, Any]:
     """Trigger execution of an orchestrated workflow DAG.
 
     Args:
@@ -53,7 +57,10 @@ def workflow_run(workflow_id: str) -> Dict[str, Any]:
     """
     wf = _WORKFLOWS_STORE.get(workflow_id)
     if not wf:
-        return MCPToolResponse(success=False, error={"code": "WORKFLOW_NOT_FOUND", "message": f"Workflow {workflow_id} not found"}).to_dict()
+        return MCPToolResponse(
+            success=False,
+            error={"code": "WORKFLOW_NOT_FOUND", "message": f"Workflow {workflow_id} not found"},
+        ).to_dict()
 
     run_id = f"run-{uuid.uuid4().hex[:8]}"
     run_record = {
@@ -65,4 +72,3 @@ def workflow_run(workflow_id: str) -> Dict[str, Any]:
     }
     _RUNS_STORE[run_id] = run_record
     return MCPToolResponse(success=True, data=run_record).to_dict()
-

@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 
 # In-memory catalogue storage for standalone server runtime
-_CATALOGUE_STORE: Dict[str, Dict[str, Any]] = {}
+_CATALOGUE_STORE: dict[str, dict[str, Any]] = {}
 
 
 def catalog_register_asset(
@@ -15,7 +16,7 @@ def catalog_register_asset(
     asset_type: str,
     description: str = "",
     owner: str = "GIS Team",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Register a new spatial dataset, database table, or FME workspace into the enterprise catalogue.
 
     Args:
@@ -36,7 +37,7 @@ def catalog_register_asset(
     return MCPToolResponse(success=True, data={"registered": True, "asset": record}).to_dict()
 
 
-def catalog_search_assets(query: str) -> Dict[str, Any]:
+def catalog_search_assets(query: str) -> dict[str, Any]:
     """Search registered assets by keyword matching in name, type, or description.
 
     Args:
@@ -44,13 +45,14 @@ def catalog_search_assets(query: str) -> Dict[str, Any]:
     """
     q_l = query.lower()
     matches = [
-        item for item in _CATALOGUE_STORE.values()
+        item
+        for item in _CATALOGUE_STORE.values()
         if q_l in item["name"].lower() or q_l in item.get("description", "").lower()
     ]
     return MCPToolResponse(success=True, data={"count": len(matches), "assets": matches}).to_dict()
 
 
-def catalog_get_lineage(asset_id: str) -> Dict[str, Any]:
+def catalog_get_lineage(asset_id: str) -> dict[str, Any]:
     """Retrieve upstream and downstream dependency graph for an asset.
 
     Args:
@@ -65,4 +67,3 @@ def catalog_get_lineage(asset_id: str) -> Dict[str, Any]:
             "downstream": ["web_sig_portal", "bi_executive_dashboard"],
         },
     ).to_dict()
-

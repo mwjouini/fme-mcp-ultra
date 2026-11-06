@@ -5,7 +5,7 @@ from __future__ import annotations
 import ipaddress
 import socket
 from urllib.parse import urlparse
-from typing import List, Optional
+
 from fme_mcp_ultra.core.config import settings
 from fme_mcp_ultra.core.errors import SSRFError
 
@@ -13,7 +13,7 @@ from fme_mcp_ultra.core.errors import SSRFError
 class SSRFGuard:
     """Verifies URLs and resolves hostnames to disallow private and loopback networks."""
 
-    def __init__(self, allowed_domains: Optional[List[str]] = None) -> None:
+    def __init__(self, allowed_domains: list[str] | None = None) -> None:
         self.allowed_domains = allowed_domains or settings.allowed_outbound_domains
 
     def validate_url(self, url: str) -> str:
@@ -43,7 +43,7 @@ class SSRFGuard:
         try:
             addr_info = socket.getaddrinfo(hostname, None)
         except socket.gaierror as e:
-            raise SSRFError(f"Failed to resolve hostname '{hostname}': {e}")
+            raise SSRFError(f"Failed to resolve hostname '{hostname}': {e}") from e
 
         for item in addr_info:
             ip_str = item[4][0]
@@ -65,4 +65,3 @@ class SSRFGuard:
 
 
 ssrf_guard = SSRFGuard()
-

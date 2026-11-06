@@ -1,7 +1,9 @@
 """Integration tests for MCP Server protocol execution."""
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from fme_mcp_ultra.server.mcp_server import mcp_server
 
 
@@ -47,10 +49,9 @@ async def test_mcp_server_call_reproject():
 async def test_mcp_server_inspect_workspace(tmp_path: Path):
     sample_fmw = tmp_path / "sample.fmw"
     sample_fmw.write_text(
-        "#! <WORKSPACE TITLE=\"Test Sample\"></WORKSPACE>\n",
+        '#! <WORKSPACE TITLE="Test Sample"></WORKSPACE>\n',
         encoding="utf-8",
     )
     res = await mcp_server.call_tool("fme_get_workspace", {"workspace_path": str(sample_fmw)})
     assert res is not None
     assert "sample.fmw" in res.content[0].text
-

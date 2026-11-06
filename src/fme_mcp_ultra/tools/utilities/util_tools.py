@@ -2,19 +2,20 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra import __version__
 from fme_mcp_ultra.core.schema import MCPToolResponse
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
 
 
-def fme_info() -> Dict[str, Any]:
+def fme_info() -> dict[str, Any]:
     """Retrieve full FME Form installation, build, licensing, and runtime details."""
     info = fme_form_client.get_info()
     return MCPToolResponse(success=True, data=info).to_dict()
 
 
-def fme_list_transformers(search: Optional[str] = None) -> Dict[str, Any]:
+def fme_list_transformers(search: str | None = None) -> dict[str, Any]:
     """List transformers installed in FME Form with optional keyword filtering.
 
     Args:
@@ -27,13 +28,13 @@ def fme_list_transformers(search: Optional[str] = None) -> Dict[str, Any]:
     ).to_dict()
 
 
-def fme_list_packages() -> Dict[str, Any]:
+def fme_list_packages() -> dict[str, Any]:
     """List official FME Hub packages installed on the local system."""
     pkgs = fme_form_client.list_packages()
     return MCPToolResponse(success=True, data={"count": len(pkgs), "packages": pkgs}).to_dict()
 
 
-def fme_execute_python(code: str, timeout_seconds: int = 120) -> Dict[str, Any]:
+def fme_execute_python(code: str, timeout_seconds: int = 120) -> dict[str, Any]:
     """Execute arbitrary Python code inside FME Form's embedded Python runtime (with fmeobjects).
 
     Args:
@@ -48,20 +49,26 @@ def fme_execute_python(code: str, timeout_seconds: int = 120) -> Dict[str, Any]:
     ).to_dict()
 
 
-def util_ping() -> Dict[str, Any]:
+def util_ping() -> dict[str, Any]:
     """Health check ping verifying that fme-mcp-ultra server is active and responsive."""
-    return MCPToolResponse(success=True, data={"status": "pong", "server": "fme-mcp-ultra"}).to_dict()
-
-
-def util_version() -> Dict[str, Any]:
-    """Retrieve current version and licensing metadata of fme-mcp-ultra."""
     return MCPToolResponse(
-        success=True,
-        data={"version": __version__, "license": "Apache-2.0", "vendor": "Safe Software Partner Community"},
+        success=True, data={"status": "pong", "server": "fme-mcp-ultra"}
     ).to_dict()
 
 
-def util_validate_coordinates(latitude: float, longitude: float) -> Dict[str, Any]:
+def util_version() -> dict[str, Any]:
+    """Retrieve current version and licensing metadata of fme-mcp-ultra."""
+    return MCPToolResponse(
+        success=True,
+        data={
+            "version": __version__,
+            "license": "Apache-2.0",
+            "vendor": "Safe Software Partner Community",
+        },
+    ).to_dict()
+
+
+def util_validate_coordinates(latitude: float, longitude: float) -> dict[str, Any]:
     """Validate whether geographic coordinates fall within standard WGS84 ranges.
 
     Args:
@@ -79,4 +86,3 @@ def util_validate_coordinates(latitude: float, longitude: float) -> Dict[str, An
             "valid_longitude": valid_lon,
         },
     ).to_dict()
-

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, Set
+
 from fme_mcp_ultra.core.errors import SecurityError
 
 
@@ -20,13 +20,51 @@ class Role(str, Enum):
 
 
 # Map roles to permitted tool domain prefixes
-ROLE_PERMISSIONS: Dict[Role, Set[str]] = {
+ROLE_PERMISSIONS: dict[Role, set[str]] = {
     Role.PLATFORM_ADMIN: {"*"},
-    Role.TENANT_ADMIN: {"fme_", "data_", "gis_", "raster_", "cad_", "quality_", "catalog_", "workflow_", "mcp_", "ai_", "gov_", "util_"},
-    Role.WORKSPACE_OPERATOR: {"fme_run_", "fme_get_", "fme_list_", "fme_search_", "fme_stream_", "data_", "gis_", "util_"},
-    Role.SPATIAL_ANALYST: {"gis_", "raster_", "cad_", "data_read_", "data_profile_", "fme_get_", "fme_list_", "util_"},
+    Role.TENANT_ADMIN: {
+        "fme_",
+        "data_",
+        "gis_",
+        "raster_",
+        "cad_",
+        "quality_",
+        "catalog_",
+        "workflow_",
+        "mcp_",
+        "ai_",
+        "gov_",
+        "util_",
+    },
+    Role.WORKSPACE_OPERATOR: {
+        "fme_run_",
+        "fme_get_",
+        "fme_list_",
+        "fme_search_",
+        "fme_stream_",
+        "data_",
+        "gis_",
+        "util_",
+    },
+    Role.SPATIAL_ANALYST: {
+        "gis_",
+        "raster_",
+        "cad_",
+        "data_read_",
+        "data_profile_",
+        "fme_get_",
+        "fme_list_",
+        "util_",
+    },
     Role.DATA_ANALYST: {"data_", "quality_", "catalog_", "fme_get_", "fme_list_", "util_"},
-    Role.AUDITOR: {"gov_audit_", "gov_list_", "catalog_get_", "fme_get_job", "quality_get_", "util_"},
+    Role.AUDITOR: {
+        "gov_audit_",
+        "gov_list_",
+        "catalog_get_",
+        "fme_get_job",
+        "quality_get_",
+        "util_",
+    },
     Role.READ_ONLY: {"fme_get_", "fme_list_", "data_read_", "catalog_get_", "util_"},
 }
 
@@ -35,7 +73,7 @@ class RBACEngine:
     """Evaluates whether a principal possesses authorisation for a tool."""
 
     @classmethod
-    def check_permission(cls, user_roles: Set[Role], tool_name: str) -> bool:
+    def check_permission(cls, user_roles: set[Role], tool_name: str) -> bool:
         """Verify if any of the user roles permit executing the tool."""
         if not user_roles:
             return False
@@ -51,11 +89,10 @@ class RBACEngine:
         return False
 
     @classmethod
-    def enforce_permission(cls, user_roles: Set[Role], tool_name: str) -> None:
+    def enforce_permission(cls, user_roles: set[Role], tool_name: str) -> None:
         """Enforce permission or raise SecurityError."""
         if not cls.check_permission(user_roles, tool_name):
             raise SecurityError(
                 f"Authorisation failed: roles {[r.value for r in user_roles]} are not permitted to execute tool '{tool_name}'.",
                 code="FORBIDDEN",
             )
-

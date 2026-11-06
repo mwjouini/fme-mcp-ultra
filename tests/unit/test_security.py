@@ -1,8 +1,15 @@
 """Unit tests for enterprise security guards and access control."""
 
-import pytest
 from pathlib import Path
-from fme_mcp_ultra.core.errors import CommandInjectionError, PathTraversalError, SSRFError, SecurityError
+
+import pytest
+
+from fme_mcp_ultra.core.errors import (
+    CommandInjectionError,
+    PathTraversalError,
+    SecurityError,
+    SSRFError,
+)
 from fme_mcp_ultra.security.command_guard import command_guard
 from fme_mcp_ultra.security.path_guard import PathGuard
 from fme_mcp_ultra.security.rbac import RBACEngine, Role
@@ -90,4 +97,3 @@ def test_rbac_restricts_read_only_user():
 def test_rbac_enforcement_raises_on_denial():
     with pytest.raises(SecurityError):
         RBACEngine.enforce_permission({Role.READ_ONLY}, "fme_run_workspace")
-

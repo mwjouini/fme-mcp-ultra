@@ -2,19 +2,25 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
-from fme_mcp_ultra.security.audit_log import audit_logger
 from fme_mcp_ultra.security.redaction import redaction_engine
 
 
-def gov_get_tenant_config() -> Dict[str, Any]:
+def gov_get_tenant_config() -> dict[str, Any]:
     """Retrieve security configuration, active guards, and quotas for the current tenant."""
     return MCPToolResponse(
         success=True,
         data={
             "tenant_id": "default",
-            "guards_active": ["PathGuard", "CommandGuard", "SSRFGuard", "RedactionEngine", "RBACEngine"],
+            "guards_active": [
+                "PathGuard",
+                "CommandGuard",
+                "SSRFGuard",
+                "RedactionEngine",
+                "RBACEngine",
+            ],
             "redaction_enabled": True,
             "max_file_size_mb": 500,
             "default_timeout_seconds": 600,
@@ -22,7 +28,7 @@ def gov_get_tenant_config() -> Dict[str, Any]:
     ).to_dict()
 
 
-def gov_redact_pii(text: str) -> Dict[str, Any]:
+def gov_redact_pii(text: str) -> dict[str, Any]:
     """Scan and scrub sensitive personal data (emails, credit cards) and authentication secrets.
 
     Args:
@@ -35,7 +41,9 @@ def gov_redact_pii(text: str) -> Dict[str, Any]:
     ).to_dict()
 
 
-def gov_classify_dataset(dataset_name: str, contains_pii: bool = False, is_internal_only: bool = True) -> Dict[str, Any]:
+def gov_classify_dataset(
+    dataset_name: str, contains_pii: bool = False, is_internal_only: bool = True
+) -> dict[str, Any]:
     """Assign data governance classification tags (PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED).
 
     Args:
@@ -52,6 +60,9 @@ def gov_classify_dataset(dataset_name: str, contains_pii: bool = False, is_inter
 
     return MCPToolResponse(
         success=True,
-        data={"dataset": dataset_name, "classification": classification, "gdpr_scope": contains_pii},
+        data={
+            "dataset": dataset_name,
+            "classification": classification,
+            "gdpr_scope": contains_pii,
+        },
     ).to_dict()
-

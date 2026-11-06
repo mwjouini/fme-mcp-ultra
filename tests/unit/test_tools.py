@@ -1,12 +1,20 @@
 """Unit tests for spatial, dataset, and utility tools."""
 
-import pytest
 from pathlib import Path
-from fme_mcp_ultra.tools.spatial.spatial_tools import gis_buffer, gis_reproject, gis_validate_geometry
-from fme_mcp_ultra.tools.datasets.dataset_tools import data_read_metadata, data_profile
-from fme_mcp_ultra.tools.quality.quality_tools import quality_score_dataset, quality_generate_data_contract
+
 from fme_mcp_ultra.tools.catalog.catalog_tools import catalog_register_asset, catalog_search_assets
-from fme_mcp_ultra.tools.utilities.util_tools import util_ping, util_version, util_validate_coordinates
+from fme_mcp_ultra.tools.datasets.dataset_tools import data_profile, data_read_metadata
+from fme_mcp_ultra.tools.quality.quality_tools import quality_score_dataset
+from fme_mcp_ultra.tools.spatial.spatial_tools import (
+    gis_buffer,
+    gis_reproject,
+    gis_validate_geometry,
+)
+from fme_mcp_ultra.tools.utilities.util_tools import (
+    util_ping,
+    util_validate_coordinates,
+    util_version,
+)
 
 
 def test_gis_reproject_wgs84_to_web_mercator():
@@ -74,7 +82,9 @@ def test_quality_score_dataset(tmp_path: Path):
 
 
 def test_catalog_register_and_search():
-    reg = catalog_register_asset("urn:layer:roads", "National Roads", "vector_layer", "Major road network")
+    reg = catalog_register_asset(
+        "urn:layer:roads", "National Roads", "vector_layer", "Major road network"
+    )
     assert reg["success"] is True
 
     search = catalog_search_assets("Roads")
@@ -87,4 +97,3 @@ def test_util_tools():
     assert "1.1.0" in util_version()["data"]["version"]
     assert util_validate_coordinates(48.85, 2.35)["data"]["valid_latitude"] is True
     assert util_validate_coordinates(120.0, 2.35)["data"]["valid_latitude"] is False
-

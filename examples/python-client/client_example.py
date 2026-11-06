@@ -1,6 +1,7 @@
 """Demonstration Python client calling fme-mcp-ultra."""
 
 import asyncio
+
 from fme_mcp_ultra.server.mcp_server import mcp_server
 
 
@@ -23,4 +24,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

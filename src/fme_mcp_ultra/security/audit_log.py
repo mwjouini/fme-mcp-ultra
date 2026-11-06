@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class AuditLogger:
@@ -19,9 +19,9 @@ class AuditLogger:
         event_type: str,
         principal: str,
         tool_name: str,
-        parameters: Optional[Dict[str, Any]] = None,
+        parameters: dict[str, Any] | None = None,
         status: str = "SUCCESS",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Record an immutable audit entry."""
         timestamp = time.time()
         record_payload = {
@@ -42,4 +42,3 @@ class AuditLogger:
 
 
 audit_logger = AuditLogger()
-

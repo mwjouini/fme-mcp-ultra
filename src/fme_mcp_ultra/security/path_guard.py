@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-from typing import List, Optional
+
 from fme_mcp_ultra.core.config import settings
 from fme_mcp_ultra.core.errors import PathTraversalError
 
@@ -12,7 +11,7 @@ from fme_mcp_ultra.core.errors import PathTraversalError
 class PathGuard:
     """Enforces strict path containment within allowed directories."""
 
-    def __init__(self, allowed_dirs: Optional[List[str]] = None) -> None:
+    def __init__(self, allowed_dirs: list[str] | None = None) -> None:
         self.allowed_dirs = [
             Path(d).resolve() for d in (allowed_dirs or settings.allowed_dirs) if d
         ]
@@ -37,7 +36,7 @@ class PathGuard:
         try:
             resolved = Path(target_path).resolve()
         except Exception as e:
-            raise PathTraversalError(f"Failed to resolve path: {e}")
+            raise PathTraversalError(f"Failed to resolve path: {e}") from e
 
         if must_exist and not resolved.exists():
             raise PathTraversalError(f"Target path does not exist: {resolved}")
@@ -63,4 +62,3 @@ class PathGuard:
 
 # Global PathGuard singleton
 path_guard = PathGuard()
-

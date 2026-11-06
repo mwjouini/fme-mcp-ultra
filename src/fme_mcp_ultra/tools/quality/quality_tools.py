@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import csv
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from fme_mcp_ultra.core.schema import MCPToolResponse
 from fme_mcp_ultra.security.path_guard import path_guard
 
 
-def quality_score_dataset(dataset_path: str) -> Dict[str, Any]:
+def quality_score_dataset(dataset_path: str) -> dict[str, Any]:
     """Calculate an overall data quality index (0-100) based on attribute completeness and syntax validity.
 
     Args:
@@ -18,12 +19,15 @@ def quality_score_dataset(dataset_path: str) -> Dict[str, Any]:
     if path.suffix.lower() not in (".csv", ".tsv"):
         return MCPToolResponse(
             success=False,
-            error={"code": "UNSUPPORTED_FORMAT", "message": "Only CSV/TSV quality scoring supported natively"},
+            error={
+                "code": "UNSUPPORTED_FORMAT",
+                "message": "Only CSV/TSV quality scoring supported natively",
+            },
         ).to_dict()
 
     total_cells = 0
     non_null_cells = 0
-    with open(path, "r", encoding="utf-8", errors="replace") as f:
+    with open(path, encoding="utf-8", errors="replace") as f:
         reader = csv.reader(f)
         for row in reader:
             for cell in row:
@@ -45,7 +49,9 @@ def quality_score_dataset(dataset_path: str) -> Dict[str, Any]:
     ).to_dict()
 
 
-def quality_generate_data_contract(dataset_name: str, schema_columns: Dict[str, str]) -> Dict[str, Any]:
+def quality_generate_data_contract(
+    dataset_name: str, schema_columns: dict[str, str]
+) -> dict[str, Any]:
     """Generate a machine-readable Data Contract YAML specification.
 
     Args:
@@ -70,4 +76,3 @@ def quality_generate_data_contract(dataset_name: str, schema_columns: Dict[str, 
         },
     }
     return MCPToolResponse(success=True, data=contract).to_dict()
-
