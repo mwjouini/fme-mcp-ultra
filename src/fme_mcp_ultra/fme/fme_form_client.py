@@ -425,7 +425,7 @@ class FMEFormClient:
         info = self.get_info()
 
         # Check running FME processes
-        running_procs = []
+        running_procs: list[dict[str, Any]] = []
         if sys.platform == "win32":
             try:
                 cmd = ["tasklist", "/FO", "CSV", "/NH"]
