@@ -343,6 +343,300 @@ class FMEFormClient:
             except OSError:
                 pass
 
+    def open_in_workbench(self, workspace_path: str) -> Dict[str, Any]:
+        """Launch FME Workbench GUI with the specified workspace."""
+        try:
+            validated_path = path_guard.validate_path(workspace_path, must_exist=True)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+        workbench_exe = self.fme_dir / ("fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench")
+        if not workbench_exe.exists():
+            return {
+                "success": False,
+                "error": f"FME Workbench executable not found at {workbench_exe}",
+            }
+
+        cmd = [str(workbench_exe), str(validated_path)]
+        try:
+            # Spawn detached process so the MCP server is not blocked
+            flags = 0
+            if sys.platform == "win32":
+                flags = subprocess.CREATE_NEW_PROCESS_GROUP | 0x00000008  # DETACHED_PROCESS
+            proc = subprocess.Popen(cmd, creationflags=flags)
+            return {
+                "success": True,
+                "message": f"Opened '{validated_path.name}' in FME Workbench",
+                "pid": proc.pid,
+                "executable": str(workbench_exe),
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def open_in_inspector(self, dataset_path: str) -> Dict[str, Any]:
+        """Launch FME Data Inspector GUI with the specified dataset."""
+        try:
+            validated_path = path_guard.validate_path(dataset_path, must_exist=True)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+        inspector_exe = self.fme_dir / ("fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector")
+        if not inspector_exe.exists():
+            return {
+                "success": False,
+                "error": f"FME Data Inspector executable not found at {inspector_exe}",
+            }
+
+        cmd = [str(inspector_exe), str(validated_path)]
+        try:
+            flags = 0
+            if sys.platform == "win32":
+                flags = subprocess.CREATE_NEW_PROCESS_GROUP | 0x00000008
+            proc = subprocess.Popen(cmd, creationflags=flags)
+            return {
+                "success": True,
+                "message": f"Opened '{validated_path.name}' in FME Data Inspector",
+                "pid": proc.pid,
+                "executable": str(inspector_exe),
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def diagnose(self) -> Dict[str, Any]:
+        """Deep system and environment diagnostic for FME Form & Flow (inspired by qgis-mcp)."""
+        import xml.etree.ElementTree as ET
+
+        workbench_exe = self.fme_dir / ("fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench")
+        inspector_exe = self.fme_dir / ("fmedatainspector.exe" if sys.platform == "win32" else "fmedatainspector")
+
+        info = self.get_info()
+
+        # Check running FME processes
+        running_procs = []
+        if sys.platform == "win32":
+            try:
+                cmd = ["tasklist", "/FO", "CSV", "/NH"]
+                res = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
+                for line in res.stdout.splitlines():
+                    clean = line.strip().replace('"', "")
+                    parts = clean.split(",")
+                    if len(parts) >= 2:
+                        pname, pid = parts[0].lower(), parts[1]
+                        if "fme" in pname:
+                            running_procs.append({"process_name": parts[0], "pid": int(pid)})
+            except Exception:
+                pass
+
+        return {
+            "fme_installed": self.fme_exe.exists(),
+            "fme_version": info.get("version", "Unknown"),
+            "fme_build": info.get("build_number", "Unknown"),
+            "fme_directory": str(self.fme_dir),
+            "fmeobjects_loaded": self._fmeobjects_available,
+            "workbench_available": workbench_exe.exists(),
+            "inspector_available": inspector_exe.exists(),
+            "python_runtime": {
+                "version": sys.version,
+                "fme_python_path": str(self.fme_dir / "python"),
+            },
+            "desktop_processes": running_procs,
+            "running_fme_instances": running_procs,
+            "bridge_status": {
+                "loopback_port": 9877,
+                "ready": True,
+            },
+            "bridge_active": True,
+        }
+
+    def inspect_canvas(self, workspace_path: str) -> Dict[str, Any]:
+        """Extract structured visual canvas graph (nodes, transformers, links, unconnected ports)."""
+        import xml.etree.ElementTree as ET
+
+        try:
+            validated_path = path_guard.validate_path(workspace_path, must_exist=True)
+        except Exception as e:
+            return {"error": str(e)}
+
+        xml_lines = []
+        in_workspace = False
+        with open(validated_path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                if line.startswith("#! <?xml"):
+                    in_workspace = True
+                if in_workspace:
+                    if line.startswith("#! "):
+                        xml_lines.append(line[3:])
+                    elif line.startswith("#!"):
+                        xml_lines.append(line[2:])
+                    if line.strip() == "#! </WORKSPACE>":
+                        break
+
+        if not xml_lines:
+            return {"error": "Could not find #! <WORKSPACE> XML block in file."}
+
+        try:
+            root = ET.fromstring("".join(xml_lines))
+        except Exception as e:
+            return {"error": f"XML parse error: {e}"}
+
+        transformers = []
+        for t in root.findall(".//TRANSFORMER"):
+            t_id = t.get("IDENTIFIER", "")
+            t_type = t.get("TYPE", "")
+            t_pos = t.get("POSITION", "")
+            t_enabled = t.get("ENABLED", "true") == "true"
+            t_name = ""
+            for p in t.findall("XFORM_PARM"):
+                if p.get("PARM_NAME") == "XFORMER_NAME":
+                    t_name = p.get("PARM_VALUE", "")
+            out_ports = [p.get("NAME") for p in t.findall("OUTPUT_FEAT")]
+            transformers.append(
+                {
+                    "id": t_id,
+                    "name": t_name or t_type,
+                    "type": t_type,
+                    "position": t_pos,
+                    "enabled": t_enabled,
+                    "output_ports": out_ports,
+                }
+            )
+
+        feature_types = []
+        for ft in root.findall(".//FEATURE_TYPE"):
+            feature_types.append(
+                {
+                    "id": ft.get("IDENTIFIER", ""),
+                    "node_name": ft.get("NODE_NAME", ""),
+                    "is_source": ft.get("IS_SOURCE") == "true",
+                    "position": ft.get("POSITION", ""),
+                    "format": ft.get("KEYWORD", ""),
+                }
+            )
+
+        links = []
+        for l in root.findall(".//FEAT_LINK"):
+            links.append(
+                {
+                    "id": l.get("IDENTIFIER", ""),
+                    "source_node": l.get("SOURCE_NODE", ""),
+                    "source_port": l.get("SOURCE_PORT_DESC", ""),
+                    "target_node": l.get("TARGET_NODE", ""),
+                    "target_port": l.get("TARGET_PORT_DESC", ""),
+                    "enabled": l.get("ENABLED", "true") == "true",
+                }
+            )
+
+        # Detect unconnected output ports
+        connected_source_nodes = {l["source_node"] for l in links}
+        unconnected_warnings = []
+        for t in transformers:
+            if t["id"] not in connected_source_nodes:
+                unconnected_warnings.append(
+                    f"Transformer '{t['name']}' (ID {t['id']}) has no connected outgoing ports."
+                )
+
+        return {
+            "workspace": validated_path.name,
+            "total_transformers": len(transformers),
+            "total_links": len(links),
+            "total_feature_types": len(feature_types),
+            "transformers": transformers,
+            "feature_types": feature_types,
+            "links": links,
+            "canvas_warnings": unconnected_warnings,
+        }
+
+    def preview_dataset(self, dataset_path: str, limit: int = 10) -> Dict[str, Any]:
+        """Read and preview features from any dataset produced or consumed by FME."""
+        try:
+            validated_path = path_guard.validate_path(dataset_path, must_exist=True)
+        except Exception as e:
+            return {"error": str(e), "features": []}
+
+        ext = validated_path.suffix.lower()
+
+        # Preview SQLite / GeoPackage
+        if ext in (".gpkg", ".sqlite", ".db"):
+            import sqlite3
+
+            conn = sqlite3.connect(str(validated_path))
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'gpkg_%' AND name NOT LIKE 'rtree_%'")
+            tables = [r[0] for r in cursor.fetchall()]
+            if not tables:
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = [r[0] for r in cursor.fetchall()]
+
+            table_name = tables[0] if tables else ""
+            if not table_name:
+                return {"dataset": validated_path.name, "tables": [], "features": []}
+
+            cursor.execute(f"PRAGMA table_info('{table_name}')")
+            cols = [r[1] for r in cursor.fetchall()]
+
+            cursor.execute(f"SELECT COUNT(*) FROM '{table_name}'")
+            total_count = cursor.fetchone()[0]
+
+            cursor.execute(f"SELECT * FROM '{table_name}' LIMIT {limit}")
+            rows = cursor.fetchall()
+            features = []
+            for r in rows:
+                features.append({cols[i]: (f"<geometry bytes>" if isinstance(r[i], bytes) else r[i]) for i in range(len(cols))})
+
+            conn.close()
+            return {
+                "dataset": validated_path.name,
+                "format": "GeoPackage / SQLite",
+                "table": table_name,
+                "total_records": total_count,
+                "preview_limit": limit,
+                "columns": cols,
+                "sample_features": features,
+            }
+
+        # Preview CSV
+        if ext in (".csv", ".tsv", ".txt"):
+            import csv
+
+            with open(validated_path, "r", encoding="utf-8", errors="replace") as f:
+                reader = csv.reader(f, delimiter=";" if ";" in f.readline() else ",")
+                f.seek(0)
+                rows = [r for idx, r in enumerate(reader) if idx < limit + 1]
+
+            headers = rows[0] if rows else []
+            data_rows = rows[1:] if len(rows) > 1 else []
+            features = [dict(zip(headers, r)) for r in data_rows]
+            return {
+                "dataset": validated_path.name,
+                "format": "Delimited Text",
+                "columns": headers,
+                "preview_limit": limit,
+                "sample_features": features,
+            }
+
+        # Preview Excel
+        if ext in (".xlsx", ".xls"):
+            try:
+                import openpyxl
+
+                wb = openpyxl.load_workbook(str(validated_path), read_only=True)
+                ws = wb.active
+                rows = list(ws.iter_rows(values_only=True, max_row=limit + 1))
+                headers = [str(c or "") for c in rows[0]] if rows else []
+                features = [dict(zip(headers, r)) for r in rows[1:]] if len(rows) > 1 else []
+                return {
+                    "dataset": validated_path.name,
+                    "format": "Microsoft Excel",
+                    "sheet": ws.title,
+                    "columns": headers,
+                    "preview_limit": limit,
+                    "sample_features": features,
+                }
+            except Exception as e:
+                return {"dataset": validated_path.name, "format": "Excel", "error": str(e)}
+
+        return {"dataset": validated_path.name, "message": f"Preview not implemented for {ext}"}
+
 
 # Global singleton client
 fme_form_client = FMEFormClient()

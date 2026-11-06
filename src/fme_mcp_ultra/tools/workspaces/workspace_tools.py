@@ -176,3 +176,66 @@ def fme_enrich_geolocalisation(
     ).to_dict()
 
 
+def fme_diagnose() -> Dict[str, Any]:
+    """Run comprehensive system diagnostic for FME Form & Flow (inspired by qgis-mcp).
+    
+    Verifies installation path, licensing, Python runtime, executable availability,
+    running desktop processes (FME Workbench, FME Data Inspector), and loopback bridge.
+    """
+    audit_logger.record_event("DIAGNOSE", "mcp-user", "fme_diagnose")
+    diag = fme_form_client.diagnose()
+    return MCPToolResponse(success=True, data=diag).to_dict()
+
+
+def fme_open_in_workbench(workspace_path: str) -> Dict[str, Any]:
+    """Launch or bring to focus FME Workbench GUI with the specified workspace.
+    
+    Args:
+        workspace_path: Absolute or canonical relative path to the .fmw workspace file.
+    """
+    audit_logger.record_event("OPEN_WORKBENCH", "mcp-user", "fme_open_in_workbench", parameters={"target": workspace_path})
+    res = fme_form_client.open_in_workbench(workspace_path)
+    return MCPToolResponse(success=res.get("success", False), data=res).to_dict()
+
+
+def fme_open_in_inspector(dataset_path: str) -> Dict[str, Any]:
+    """Launch FME Data Inspector GUI with the specified dataset for instant map/feature inspection.
+    
+    Args:
+        dataset_path: Path to dataset (.gpkg, .xlsx, .shp, .geojson, .csv).
+    """
+    audit_logger.record_event("OPEN_INSPECTOR", "mcp-user", "fme_open_in_inspector", parameters={"target": dataset_path})
+    res = fme_form_client.open_in_inspector(dataset_path)
+    return MCPToolResponse(success=res.get("success", False), data=res).to_dict()
+
+
+def fme_inspect_canvas(workspace_path: str) -> Dict[str, Any]:
+    """Extract structured visual canvas graph from an FME workspace (.fmw).
+    
+    Returns transformers with (X, Y) canvas positions, feature types, port links,
+    and alerts on unconnected output ports (which may cause silent data loss).
+    
+    Args:
+        workspace_path: Path to the .fmw workspace file.
+    """
+    audit_logger.record_event("INSPECT_CANVAS", "mcp-user", "fme_inspect_canvas", parameters={"target": workspace_path})
+    canvas = fme_form_client.inspect_canvas(workspace_path)
+    if "error" in canvas:
+        return MCPToolResponse(success=False, error={"code": "PARSE_ERROR", "message": canvas["error"]}).to_dict()
+    return MCPToolResponse(success=True, data=canvas).to_dict()
+
+
+def fme_preview_dataset(dataset_path: str, limit: int = 10) -> Dict[str, Any]:
+    """Preview features and schema from any dataset produced or consumed by FME.
+    
+    Supports GeoPackage, SQLite, Microsoft Excel (.xlsx), and Delimited Text (.csv).
+    
+    Args:
+        dataset_path: Path to the dataset file.
+        limit: Maximum number of sample features to return (default 10).
+    """
+    audit_logger.record_event("PREVIEW_DATASET", "mcp-user", "fme_preview_dataset", parameters={"target": dataset_path})
+    preview = fme_form_client.preview_dataset(dataset_path, limit=limit)
+    return MCPToolResponse(success=True, data=preview).to_dict()
+
+

@@ -92,6 +92,36 @@ def fme_enrich_geolocalisation(
     )
 
 
+@mcp_server.tool()
+def fme_diagnose() -> Dict[str, Any]:
+    """Run comprehensive system diagnostic for FME Form & Flow (inspired by qgis-mcp)."""
+    return workspace_tools.fme_diagnose()
+
+
+@mcp_server.tool()
+def fme_open_in_workbench(workspace_path: str) -> Dict[str, Any]:
+    """Launch or bring to focus FME Workbench GUI with the specified workspace."""
+    return workspace_tools.fme_open_in_workbench(workspace_path=workspace_path)
+
+
+@mcp_server.tool()
+def fme_open_in_inspector(dataset_path: str) -> Dict[str, Any]:
+    """Launch FME Data Inspector GUI with the specified dataset for visual feature/map inspection."""
+    return workspace_tools.fme_open_in_inspector(dataset_path=dataset_path)
+
+
+@mcp_server.tool()
+def fme_inspect_canvas(workspace_path: str) -> Dict[str, Any]:
+    """Extract structured visual canvas graph from an FME workspace (.fmw)."""
+    return workspace_tools.fme_inspect_canvas(workspace_path=workspace_path)
+
+
+@mcp_server.tool()
+def fme_preview_dataset(dataset_path: str, limit: int = 10) -> Dict[str, Any]:
+    """Preview features and schema from any dataset produced or consumed by FME (.gpkg, .xlsx, .csv)."""
+    return workspace_tools.fme_preview_dataset(dataset_path=dataset_path, limit=limit)
+
+
 
 # ==============================================================================
 # SPATIAL TOOLS

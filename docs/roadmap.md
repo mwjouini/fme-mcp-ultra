@@ -36,3 +36,4 @@ This document outlines the strategic development milestones and feature releases
 - **Enterprise Governance Suite**: Automated lineage graphing across multi-workspace data pipelines.
 - **Federated MCP Gateway**: Downstream routing and composition across external MCP servers (PostGIS, GeoServer, QGIS, ArcGIS Enterprise).
 - **High-Throughput Batch Processing**: Celery and Redis distributed job queue integration for multi-worker FME clusters.
+

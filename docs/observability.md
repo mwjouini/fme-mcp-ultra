@@ -47,3 +47,4 @@ All data transformations, parameter bindings, and workspace executions are appen
 ```
 
 Audit records can be forwarded directly to SIEM solutions such as Splunk, Datadog, ElasticSearch, or Google Cloud Operations Suite.
+

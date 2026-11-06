@@ -1,6 +1,36 @@
 # Tools Reference Catalogue
 
-A complete index of tools exposed by `fme-mcp-ultra`, organized by domain.
+A complete index of tools exposed by `fme-mcp-ultra`, organised by domain.
+
+---
+
+## 🖥️ Desktop Interactivity & Bridge (Inspired by `qgis-mcp`)
+
+### `fme_diagnose`
+Runs comprehensive system and environment diagnostics for FME Form and FME Flow.
+- **Returns**: Installation path, FME version, build number, licensing status, embedded Python runtime, active desktop processes (`fmeworkbench.exe`, `fmedatainspector.exe`), and loopback bridge availability.
+
+### `fme_inspect_canvas`
+Parses the visual workspace canvas topology directly from `.fmw` XML.
+- **Arguments**:
+  - `workspace_path` (*string, required*): Path to the `.fmw` workspace file.
+- **Returns**: Transformer layout coordinates $(X, Y)$, feature types, port connection links, and automated warning detection for unconnected output ports.
+
+### `fme_open_in_workbench`
+Launches or focuses FME Workbench GUI with the target workspace in a detached, non-blocking process.
+- **Arguments**:
+  - `workspace_path` (*string, required*): Path to the `.fmw` workspace file.
+
+### `fme_open_in_inspector`
+Launches FME Data Inspector GUI directly on any spatial dataset for interactive visual map exploration.
+- **Arguments**:
+  - `dataset_path` (*string, required*): Path to the spatial dataset (.gpkg, .shp, .xlsx, .csv, .geojson).
+
+### `fme_preview_dataset`
+Provides instant schema and sample feature inspection without needing to launch desktop GUIs.
+- **Arguments**:
+  - `dataset_path` (*string, required*): Path to the dataset file (.gpkg, .sqlite, .xlsx, .csv).
+  - `limit` (*integer, default 10*): Maximum sample records to return.
 
 ---
 

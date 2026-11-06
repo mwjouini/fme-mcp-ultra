@@ -34,3 +34,4 @@ Thank you for your interest in contributing to `fme-mcp-ultra`! We welcome contr
    ```
 6. Commit changes with Conventional Commits (e.g. `feat(spatial): add DBSCAN clustering tool`).
 7. Push to your branch and submit a Pull Request against `main`.
+

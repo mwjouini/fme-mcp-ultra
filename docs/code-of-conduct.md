@@ -26,3 +26,4 @@ This Code of Conduct applies within all community spaces (GitHub repositories, i
 ## Reporting & Contact
 
 Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported to the project maintainers at `wael.jouini@gmail.com`. All complaints will be reviewed and investigated promptly and fairly.
+
