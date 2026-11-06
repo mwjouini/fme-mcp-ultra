@@ -37,7 +37,12 @@ Community leaders will follow these Community Impact Guidelines in determining t
 3. **Temporary Ban**: A temporary ban from any sort of interaction or public communication.
 4. **Permanent Ban**: A permanent ban from any sort of public interaction within the community.
 
+## Contact & Reporting
+
+Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported to the project maintainers at `mohamed.wael.jouini@gmail.com`. All complaints will be reviewed and investigated promptly and fairly.
+
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1.
+
 

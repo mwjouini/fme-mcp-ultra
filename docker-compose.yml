@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/mwjouini/fme-mcp-ultra:latest
+    image: ghcr.io/mwjouini/fme-mcp-ultra:v1.1.0
     container_name: fme-mcp-ultra
     restart: unless-stopped
     ports:

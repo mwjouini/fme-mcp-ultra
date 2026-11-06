@@ -9,12 +9,9 @@
         "stdio"
       ],
       "env": {
-        "FME_DIR": "C:\\Program Files\\FME",
-        "FME_ALLOWED_DIRS": "C:\\Program Files\\FME;E:\\fme_mcp",
         "PYTHONIOENCODING": "utf-8",
         "PYTHONUNBUFFERED": "1"
       }
     }
   }
 }
-

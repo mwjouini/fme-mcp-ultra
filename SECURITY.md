@@ -6,7 +6,8 @@ We provide security patches and vulnerability remediations for the following rel
 
 | Version | Supported |
 | :--- | :--- |
-| **1.0.x** | :white_check_mark: Active security support |
+| **1.1.x** | :white_check_mark: Active security support |
+| **1.0.x** | :white_check_mark: Supported |
 | < 1.0.0 | :x: Unsupported |
 
 ---
