@@ -1,0 +1,31 @@
+# Smithery configuration for fme-mcp-ultra
+# Enables 1-click installation on Smithery, Cursor, and Claude Desktop
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      fmeDir:
+        type: string
+        description: "Path to local FME Form directory (auto-detected by default)"
+      allowedDirs:
+        type: string
+        description: "Semicolon-separated list of allowed directories"
+      fmeFlowUrl:
+        type: string
+        description: "Enterprise FME Flow Server URL"
+      fmeFlowToken:
+        type: string
+        description: "FME Flow REST API Bearer token"
+  commandFunction:
+    |
+    (config) => ({
+      command: 'uvx',
+      args: ['fme-mcp-ultra', 'serve', '--transport', 'stdio'],
+      env: {
+        ...(config.fmeDir ? { FME_MCP_FME_DIR: config.fmeDir } : {}),
+        ...(config.allowedDirs ? { FME_MCP_ALLOWED_DIRS: config.allowedDirs } : {}),
+        ...(config.fmeFlowUrl ? { FME_MCP_FME_FLOW_URL: config.fmeFlowUrl } : {}),
+        ...(config.fmeFlowToken ? { FME_MCP_FME_FLOW_TOKEN: config.fmeFlowToken } : {})
+      }
+    })
