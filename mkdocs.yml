@@ -53,6 +53,7 @@ nav:
       - FME Version Compatibility (2018–2026+): fme-compatibility.md
       - FME 2026 Parity: fme-2026-parity.md
   - MCP Client Guides: mcp-clients.md
+  - Desktop Live Integration: desktop-integration.md
   - Deployment:
       - Overview: deployment.md
       - Docker: docker.md
