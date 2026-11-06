@@ -199,7 +199,7 @@ docker run -d --name fme-mcp-ultra \
 fme-mcp-ultra doctor
 
 # Inspect a workspace file
-fme-mcp-ultra inspect E:/fme_mcp/geolocalisation.fmw
+fme-mcp-ultra inspect path/to/workspace.fmw
 
 # Launch stdio server for desktop clients
 fme-mcp-ultra serve --transport stdio

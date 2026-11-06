@@ -2,6 +2,8 @@
 
 Step-by-step configuration for leading Model Context Protocol clients.
 
+`fme-mcp-ultra` features zero-configuration auto-detection for FME Form installations (`C:\Program Files\FME`, `/opt/fme`, or system `PATH`) and automatically grants access to the user's working and home directories.
+
 ---
 
 ## 1. Claude Desktop
@@ -11,7 +13,20 @@ Locate your configuration file:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-Add the following block:
+### Standard Setup (via `uvx` — Zero Configuration)
+```json
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "uvx",
+      "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+### Advanced Setup (Custom Directories & FME Flow)
+If FME is installed in a non-standard path, or if you wish to restrict/allow explicit directories or connect to FME Flow:
 ```json
 {
   "mcpServers": {
@@ -19,8 +34,10 @@ Add the following block:
       "command": "uvx",
       "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"],
       "env": {
-        "FME_DIR": "C:\\Program Files\\FME",
-        "FME_ALLOWED_DIRS": "C:\\Program Files\\FME;E:\\fme_mcp"
+        "FME_MCP_FME_DIR": "C:\\Program Files\\FME",
+        "FME_MCP_ALLOWED_DIRS": "C:\\Workspaces;D:\\GIS_Data",
+        "FME_MCP_FME_FLOW_URL": "https://fme-flow.yourcompany.org",
+        "FME_MCP_FME_FLOW_TOKEN": "your-token-here"
       }
     }
   }
@@ -29,24 +46,26 @@ Add the following block:
 
 ---
 
-## 2. Cursor IDE
+## 2. Cursor & Windsurf
 
 In Cursor Settings (`Features -> MCP Servers`), add:
 - **Name**: `fme-mcp-ultra`
 - **Type**: `command`
-- **Command**: `fme-mcp-ultra serve --transport stdio`
+- **Command**: `uvx fme-mcp-ultra serve --transport stdio`
+
+*(Or if installed in your Python environment: `fme-mcp-ultra serve --transport stdio`)*
 
 ---
 
-## 3. Antigravity
+## 3. Antigravity & VS Code (Cline / Roo Code)
 
-In your Antigravity agent configuration:
+In your agent configuration file:
 ```json
 {
   "mcpServers": {
     "fme-mcp-ultra": {
-      "command": "E:/fme_mcp/.venv/Scripts/python.exe",
-      "args": ["-m", "fme_mcp_ultra", "serve", "--transport", "stdio"]
+      "command": "fme-mcp-ultra",
+      "args": ["serve", "--transport", "stdio"]
     }
   }
 }

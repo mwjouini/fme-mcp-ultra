@@ -154,9 +154,18 @@ def fme_enrich_geolocalisation(
     import sys
     from pathlib import Path
 
-    script_path = Path(r"E:\fme_mcp\run_geolocalisation_ultra.py")
-    if not script_path.exists():
-        return MCPToolResponse(success=False, error={"code": "SCRIPT_NOT_FOUND", "message": "Enrichment script not found"}).to_dict()
+    cwd = Path.cwd()
+    script_candidates = [
+        cwd / "run_geolocalisation_ultra.py",
+        cwd / "_scratch" / "run_geolocalisation_ultra.py",
+        Path(__file__).resolve().parents[4] / "run_geolocalisation_ultra.py",
+    ]
+    script_path = next((p for p in script_candidates if p.exists()), None)
+    if not script_path:
+        return MCPToolResponse(
+            success=False,
+            error={"code": "SCRIPT_NOT_FOUND", "message": "Enrichment script run_geolocalisation_ultra.py not found"},
+        ).to_dict()
 
     python_exe = sys.executable
     cmd = [python_exe, str(script_path)]
@@ -169,9 +178,9 @@ def fme_enrich_geolocalisation(
         data={
             "stdout": res.stdout,
             "stderr": res.stderr if res.returncode != 0 else None,
-            "geoloc_xlsx": str(output_geoloc_xlsx or r"E:\fme_mcp\geolocalisé.xlsx"),
-            "non_geoloc_xlsx": str(output_non_geoloc_xlsx or r"E:\fme_mcp\non_geolocalisé.xlsx"),
-            "gpkg": str(output_gpkg or r"E:\fme_mcp\geolocalisé.gpkg"),
+            "geoloc_xlsx": str(output_geoloc_xlsx or (cwd / "geolocalisé.xlsx")),
+            "non_geoloc_xlsx": str(output_non_geoloc_xlsx or (cwd / "non_geolocalisé.xlsx")),
+            "gpkg": str(output_gpkg or (cwd / "geolocalisé.gpkg")),
         },
     ).to_dict()
 

@@ -149,3 +149,4 @@ class FMEBridgeClient:
 # Global singleton instances
 fme_bridge_server = FMEBridgeServer()
 fme_bridge_client = FMEBridgeClient()
+

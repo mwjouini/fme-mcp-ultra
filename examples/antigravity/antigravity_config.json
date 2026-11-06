@@ -1,17 +1,14 @@
 {
   "mcpServers": {
     "fme-mcp-ultra": {
-      "command": "E:/fme_mcp/.venv/Scripts/python.exe",
+      "command": "uvx",
       "args": [
-        "-m",
-        "fme_mcp_ultra",
+        "fme-mcp-ultra",
         "serve",
         "--transport",
         "stdio"
       ],
       "env": {
-        "FME_DIR": "C:/Program Files/FME",
-        "FME_ALLOWED_DIRS": "C:/Program Files/FME;E:/fme_mcp",
         "PYTHONIOENCODING": "utf-8",
         "PYTHONUNBUFFERED": "1"
       }
