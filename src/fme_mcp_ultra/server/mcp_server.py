@@ -1,4 +1,4 @@
-"""Universal Model Context Protocol (MCP) Server for FME 2025.2+.
+"""Model Context Protocol (MCP) Server for Safe Software FME (2018.0 - 2026+).
 
 Exposes enterprise FME Form & Flow operations as standardized MCP tools.
 """
@@ -26,7 +26,7 @@ mcp_server = MCPServer(
     name="fme-mcp-ultra",
     version=__version__,
     instructions=(
-        "Universal enterprise Model Context Protocol (MCP) server for Safe Software FME 2025.2. "
+        "Model Context Protocol (MCP) server for Safe Software FME (2018.0 - 2026+). "
         "Allows AI agents to discover, inspect, and execute spatial data transformation workspaces, "
         "reproject coordinates, validate geometries, enforce data contracts, and query audit trails."
     ),

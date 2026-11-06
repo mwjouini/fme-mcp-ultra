@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial public release of `fme-mcp-ultra`.
-- Full compatibility with Safe Software FME 2025.2 (FME Form and FME Flow).
+- Universal compatibility with Safe Software FME 2018.0 through 2026+ (FME Form and FME Flow).
 - Universal MCP transports: Standard I/O (`stdio`) and Streamable HTTP (`sse`).
 - Dynamic workspace-to-MCP engine automatically converting `.fmw` workspaces into validated MCP tools.
 - Enterprise security engine including:

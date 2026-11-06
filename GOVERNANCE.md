@@ -12,8 +12,7 @@
 
 1. **Consensus-Seeking**: Technical proposals and architecture changes are submitted via RFCs in GitHub Discussions.
 2. **Review Criteria**:
-   - Adherence to British English (en-GB).
-   - Strict Zero-Trust security compliance (no regression in PathGuard/SSRF guard).
-   - 100% test coverage for security-critical paths.
-   - Backward compatibility with FME 2025.2.
+   - Clear and maintainable Python code with unit tests.
+   - Strict security compliance (no path traversal or command injection risks).
+   - Backward compatibility across supported FME versions (2018.0 to 2026+).
 

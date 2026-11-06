@@ -18,7 +18,7 @@ body:
     id: fme_version
     attributes:
       label: FME Form / Flow Version
-      placeholder: "FME Form 2025.2 (Build 25810)"
+      placeholder: "e.g. FME Form 2024.1 (Build 24610) or FME Flow 2023.2"
     validations:
       required: true
   - type: textarea

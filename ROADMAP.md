@@ -5,7 +5,7 @@ This document outlines the strategic evolution of **`fme-mcp-ultra`**.
 ---
 
 ## Phase 1: Foundation (v1.0.0) — :white_check_mark: Complete
-- [x] Full support for **FME Form 2025.2** via local CLI and native `fmeobjects` Python bindings.
+- [x] Full support for **FME Form & Flow (2018.0 - 2026+)** via local CLI, native `fmeobjects` Python bindings, and REST API.
 - [x] Streamable HTTP and stdio transports.
 - [x] Complete security middleware (PathGuard, CommandGuard, SSRF Guard, PII Redaction).
 - [x] Dynamic workspace-to-MCP engine with automated parameter inference.

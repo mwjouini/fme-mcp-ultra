@@ -1,14 +1,14 @@
-# FME 2026 Parity & Transcendence Strategy
+# Comparison with FME 2026 Native MCP
 
-Safe Software announced and released official Model Context Protocol (MCP) integrations starting with FME 2026:
-1. **FME 2026.1**: `safe.mcp` / `MCPCaller` on FME Hub (Client mode, allowing FME to call external MCP tools).
-2. **FME 2026.2**: FME Flow Native MCP Server (Server mode, exposing workspaces as MCP tools).
+Safe Software introduced Model Context Protocol (MCP) support in FME 2026:
+1. **FME 2026.1**: `safe.mcp` / `MCPCaller` on FME Hub (Client mode, allowing FME workspaces to call external MCP tools).
+2. **FME 2026.2**: FME Flow Native MCP Server (Server mode, exposing hosted workspaces as MCP tools).
 
 ---
 
-## ⚖️ Parity Matrix
+## Feature Comparison
 
-`fme-mcp-ultra` implements both modes simultaneously in a single, unified runtime:
+`fme-mcp-ultra` supports both server and client capabilities in a single runtime, while also adding desktop client support and backward compatibility:
 
 | Capability | FME 2026 Official | `fme-mcp-ultra` |
 | :--- | :---: | :---: |
@@ -22,5 +22,4 @@ Safe Software announced and released official Model Context Protocol (MCP) integ
 | **PII & Credential Redaction** | ❌ Not included | ✅ Automated Real-Time Masking |
 | **Built-in Vector GIS Tools** | ❌ None (must create FMW) | ✅ Built-in spatial intelligence |
 | **Data Contracts & Scoring** | ❌ None | ✅ YAML Data Contracts & Profiling |
-| **Support for FME 2025.2** | ❌ Requires 2026+ | ✅ Native 2025.2 support |
-
+| **Support for Older Versions (2018.0 - 2025.x)** | ❌ Requires FME 2026+ | ✅ Full support for FME 2018.0 through 2026+ |

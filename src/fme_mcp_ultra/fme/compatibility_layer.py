@@ -1,4 +1,4 @@
-"""Compatibility Layer: Bridges FME Form 2025.2, FME Flow, and future 2026.x runtimes."""
+"""Compatibility Layer: Bridges FME Form (2018.0 - 2026+), FME Flow, and native MCP runtimes."""
 
 from __future__ import annotations
 

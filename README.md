@@ -5,24 +5,25 @@
 [![Licence: Apache-2.0](https://img.shields.io/badge/Licence-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-2025--2026_Compliant-green.svg)](https://modelcontextprotocol.io/)
-[![FME 2025.2 Supported](https://img.shields.io/badge/Safe_Software_FME-2025.2_Form_%26_Flow-orange.svg)](https://www.safe.com/)
+[![FME Compatibility](https://img.shields.io/badge/Safe_Software_FME-2018.0%20--%202026%2B%20(Form%20%26%20Flow)-orange.svg)](https://www.safe.com/)
 
-**Universal, secure, production-grade Model Context Protocol (MCP) server for Safe Software FME 2025.2 (FME Form & FME Flow), geospatial data, enterprise ETL pipelines, and AI agents.**
+**Universal, secure, production-grade Model Context Protocol (MCP) server for Safe Software FME (compatible with FME Form & FME Flow from version 2018.0 through 2026+), geospatial data, enterprise ETL pipelines, and AI agents.**
 
 Usable by any standard MCP client: **Claude Desktop, Claude Code, Cursor, VS Code, Antigravity, Windsurf, LangChain, and OpenAI Agents SDK.**
 
 ---
 
-## 🌟 Executive Overview
+## 🌟 Overview
 
-While Safe Software introduced native MCP integration in FME 2026 (`safe.mcp` client package in 2026.1 and native Flow MCP Server in 2026.2), organizations running **FME 2025.2** previously lacked a direct bridge to connect Large Language Models with their spatial data pipelines.
+Safe Software introduced native Model Context Protocol (MCP) support in FME 2026 (`safe.mcp` / `MCPCaller` in 2026.1 and native Flow MCP Server in 2026.2). However, many teams run on **FME 2018.0 through 2025**, which previously lacked any way to connect LLMs and AI agents with their spatial data pipelines.
 
-`fme-mcp-ultra` solves this by delivering:
-1. **FME 2025.2 Compatibility**: Direct execution via local FME Form (`fme.exe` and `fmeobjects` C-API bindings) and remote FME Flow REST APIs.
-2. **Dynamic Workspace-to-Tool Engine**: Automatically discovers workspaces, parses published parameters, infers strict JSON Schemas, and exposes workspaces as callable MCP tools.
-3. **Enterprise DevSecOps Architecture**: Zero-Trust security with directory sandboxing (`PathGuard`), shell-injection prevention (`CommandGuard`), outbound network protection (`SSRF Guard`), and automated PII / secret redaction.
-4. **Outbound MCP Federation**: Functions as both an MCP server and an outbound MCP client (`MCPCaller` emulation), enabling chaining across multi-server topologies.
-5. **Geospatial Intelligence Layer**: Built-in vector reprojection, buffering, geometry validation, dataset profiling, and data contracts.
+`fme-mcp-ultra` bridges this gap:
+1. **Works with All FME Releases (2018.0 to 2026+)**: Works locally with FME Form (`fme.exe` and `fmeobjects` bindings) and remotely with FME Flow REST APIs (v3 & v4).
+2. **Dynamic Workspace Tools**: Discovers `.fmw` workspaces, extracts published parameters, and exposes them as typed MCP tools for your AI assistant.
+3. **Desktop Interactivity**: Live environment diagnostics, XML canvas topology inspection, detached GUI launching (`FME Workbench`, `FME Data Inspector`), and dataset feature previews (inspired by `qgis-mcp`).
+4. **Security by Default**: Directory sandboxing (`PathGuard`), shell command guards (`CommandGuard`), network filtering (`SSRF Guard`), and automatic PII/credential redaction.
+5. **Outbound MCP Federation**: Acts as both an MCP server and client, allowing multi-server tool chaining.
+6. **Geospatial Utilities**: Built-in coordinate reprojection, buffering, geometry validation, dataset profiling, and data contracts.
 
 ---
 
@@ -69,7 +70,7 @@ flowchart TB
     end
 
     subgraph Targets["Target Infrastructure"]
-        FME_Form["Local FME Form 2025.2 (Engine)"]
+        FME_Form["Local FME Form Engine (2018.0 - 2026+)"]
         FME_Flow["Enterprise FME Flow Server"]
         Ext_MCP["Remote Federated MCP Servers"]
     end
@@ -171,17 +172,17 @@ docker run -d --name fme-mcp-ultra \
 
 ---
 
-## 📊 FME Compatibility Matrix
+## 📊 FME Version Compatibility
 
-| Feature | FME Form 2025.2 | FME Flow 2025.2 | FME 2026 Native | `fme-mcp-ultra` |
-| :--- | :---: | :---: | :---: | :---: |
-| **Local Desktop Execution** | CLI / C-API | ❌ | ❌ | ✅ Yes |
-| **Remote Cluster Execution** | ❌ | REST v3 | REST v4 | ✅ Yes |
-| **MCP Server Mode** | ❌ | ❌ | ✅ Flow only | ✅ Universal |
-| **MCP Client (Federation)** | ❌ | ❌ | ✅ `MCPCaller` | ✅ Advanced Client |
-| **Built-in Vector GIS** | ❌ | ❌ | ❌ | ✅ 55+ Tools |
-| **Zero-Trust Security Guards** | ❌ | ❌ | ⚠️ Basic | ✅ Full Suite |
-| **Data Contracts & Scoring** | ❌ | ❌ | ❌ | ✅ Yes |
+`fme-mcp-ultra` is compatible with all versions of Safe Software FME from **2018.0 through 2026+**:
+
+| FME Version | Compatibility | FME Form (Desktop) | FME Flow (Server) | How it works |
+| :--- | :---: | :---: | :---: | :--- |
+| **FME 2026+** | **Full** | ✅ Yes | ✅ Yes | Works alongside native FME 2026 MCP endpoints, adding `stdio` desktop transport and security controls. |
+| **FME 2025.x** | **Full** | ✅ Yes | ✅ Yes | Direct `fme.exe` execution, in-memory `fmeobjects` bindings, canvas XML topology parsing, FME Flow REST v3. |
+| **FME 2021 – 2024** | **Full** | ✅ Yes | ✅ Yes | Identical `.fmw` XML canvas schema, CLI commands, and FME Flow REST v3 API. |
+| **FME 2018 – 2020** | **Full** | ✅ Yes | ✅ Yes | Full support for FME Server REST API v3 (introduced in 2018.0) and local workspace execution. |
+| **FME 2015 – 2017** | **Partial** | ⚠️ CLI Only | ❌ Legacy REST v2 | Command-line `fme.exe` workspace runner supported; REST API v2 deprecated. |
 
 ---
 
@@ -206,7 +207,6 @@ fme-mcp-ultra serve --transport streamable-http --host 0.0.0.0 --port 8000
 ## 🤝 Contributing
 
 Contributions are welcomed under our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
-The official project language is **British English (en-GB)**.
 
 ---
 

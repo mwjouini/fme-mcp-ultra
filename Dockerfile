@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 FROM python:3.11-slim-bookworm AS runtime
 
 LABEL org.opencontainers.image.title="fme-mcp-ultra" \
-      org.opencontainers.image.description="Universal, secure Model Context Protocol server for FME 2025.2" \
+      org.opencontainers.image.description="Model Context Protocol (MCP) server for Safe Software FME (2018.0 - 2026+)" \
       org.opencontainers.image.authors="Mohamed Wael JOUINI <mohamed.wael.jouini@gmail.com>" \
       org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.source="https://github.com/mwjouini/fme-mcp-ultra"

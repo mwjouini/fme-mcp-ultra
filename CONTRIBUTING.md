@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to **`fme-mcp-ultra`**. We welcome community contributions, bug reports, feature requests, and documentation improvements.
 
-The official project language is **British English (en-GB)**. All pull requests, code comments, issue descriptions, and documentation must adhere to British English spelling (e.g. *organisation*, *authorisation*, *behaviour*, *catalogue*).
+Documentation and code comments are maintained in English. Contributions in any clear, standard English are warmly welcomed.
 
 ---
 

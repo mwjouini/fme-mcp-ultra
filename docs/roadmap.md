@@ -5,7 +5,7 @@ This document outlines the strategic development milestones and feature releases
 ## Version 1.0.0 (Released — November 2026) ✅
 
 - **Core MCP Server**: Streamable HTTP and stdio transports based on MCP specification 1.x.
-- **FME 2025.2 Dual Engine**:
+- **Universal FME Engine (2018.0 - 2026+)**:
   - Direct local FME Form execution via `fme.exe` CLI and `fmeobjects` bindings.
   - FME Flow REST API client with full authentication and workspace discovery.
 - **Security Engine**:

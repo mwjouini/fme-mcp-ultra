@@ -14,7 +14,7 @@ from fme_mcp_ultra.server.mcp_server import mcp_server
 
 cli = typer.Typer(
     name="fme-mcp-ultra",
-    help="Universal, secure Model Context Protocol server for Safe Software FME 2025.2+.",
+    help="Model Context Protocol (MCP) server for Safe Software FME (2018.0 - 2026+).",
     add_completion=False,
 )
 console = Console()
@@ -63,7 +63,7 @@ def doctor() -> None:
     table.add_column("Details", style="green")
 
     # 1. Server Version
-    table.add_row("fme-mcp-ultra", "OK", f"v{__version__} (en-GB)")
+    table.add_row("fme-mcp-ultra", "OK", f"v{__version__}")
 
     # 2. FME Form Local Detection
     info = fme_form_client.get_info()

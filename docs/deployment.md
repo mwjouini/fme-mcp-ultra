@@ -14,7 +14,7 @@
 flowchart TD
     subgraph Workstation["Developer Workstation"]
         Client1["Claude Desktop / Cursor"] --> |stdio| LocalServer["fme-mcp-ultra (Local)"]
-        LocalServer --> FMEForm["FME Form 2025.2 (fme.exe)"]
+        LocalServer --> FMEForm["FME Form Engine (2018.0 - 2026+)"]
     end
 
     subgraph EnterpriseCloud["Enterprise Cloud / Kubernetes"]

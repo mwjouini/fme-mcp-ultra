@@ -1,4 +1,4 @@
-"""FME Form Client: Interacts directly with local FME Form 2025.2+ installations."""
+"""FME Form Client: Interacts directly with local FME Form installations (2018.0 - 2026+)."""
 
 from __future__ import annotations
 
