@@ -20,7 +20,7 @@ Safe Software introduced native Model Context Protocol (MCP) support in FME 2026
 `fme-mcp-ultra` bridges this gap:
 1. **Works with All FME Releases (2018.0 to 2026+)**: Works locally with FME Form (`fme.exe` and `fmeobjects` bindings) and remotely with FME Flow REST APIs (v3 & v4).
 2. **Dynamic Workspace Tools**: Discovers `.fmw` workspaces, extracts published parameters, and exposes them as typed MCP tools for your AI assistant.
-3. **Desktop Interactivity**: Live environment diagnostics, XML canvas topology inspection, detached GUI launching (`FME Workbench`, `FME Data Inspector`), and dataset feature previews (inspired by `qgis-mcp`).
+3. **Desktop Interactivity**: Live environment diagnostics, XML canvas topology inspection, detached GUI launching (`FME Workbench`, `FME Data Inspector`), and dataset feature previews.
 4. **Security by Default**: Directory sandboxing (`PathGuard`), shell command guards (`CommandGuard`), network filtering (`SSRF Guard`), and automatic PII/credential redaction.
 5. **Outbound MCP Federation**: Acts as both an MCP server and client, allowing multi-server tool chaining.
 6. **Geospatial Utilities**: Built-in coordinate reprojection, buffering, geometry validation, dataset profiling, and data contracts.
@@ -147,7 +147,7 @@ docker run -d --name fme-mcp-ultra \
 
 | Domain | Key Tools | Description |
 | :--- | :--- | :--- |
-| **Desktop Interactivity** | `fme_diagnose`, `fme_inspect_canvas`, `fme_open_in_workbench`, `fme_open_in_inspector`, `fme_preview_dataset` | Live environment diagnosis, XML canvas graph parsing, detached GUI launching, and instant dataset feature preview (inspired by `qgis-mcp`). |
+| **Desktop Interactivity** | `fme_diagnose`, `fme_inspect_canvas`, `fme_open_in_workbench`, `fme_open_in_inspector`, `fme_preview_dataset` | Live environment diagnosis, XML canvas graph parsing, detached GUI launching, and instant dataset feature preview. |
 | **Workspaces** | `fme_discover_workspaces`, `fme_get_workspace`, `fme_run_workspace`, `fme_compare_workspaces` | Crawls directories, extracts published parameters, and executes `.fmw` workspaces. |
 | **Spatial Analysis** | `gis_reproject`, `gis_buffer`, `gis_validate_geometry` | High-precision CRS conversion (EPSG:4326 to 2154 / 3857), circular buffering, and polygon validation. |
 | **Data Engineering** | `data_read_metadata`, `data_profile` | Column analysis, null counts, distinct value distribution, and format inspection. |

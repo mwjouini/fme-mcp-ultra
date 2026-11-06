@@ -4,7 +4,7 @@ A complete index of tools exposed by `fme-mcp-ultra`, organised by domain.
 
 ---
 
-## 🖥️ Desktop Interactivity & Bridge (Inspired by `qgis-mcp`)
+## 🖥️ Desktop Interactivity & Bridge
 
 ### `fme_diagnose`
 Runs comprehensive system and environment diagnostics for FME Form and FME Flow.

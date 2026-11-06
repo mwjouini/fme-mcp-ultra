@@ -29,3 +29,4 @@ startCommand:
         ...(config.fmeFlowToken ? { FME_MCP_FME_FLOW_TOKEN: config.fmeFlowToken } : {})
       }
     })
+

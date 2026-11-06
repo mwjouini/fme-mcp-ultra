@@ -1,8 +1,7 @@
 """FME Live Bridge: Loopback TCP socket bridge connecting FME Desktop and MCP clients.
 
-Inspired by the qgis-mcp architecture (nkarasiak/qgis-mcp), this bridge allows
-AI agents to interact with a running FME desktop session over a secure local
-loopback socket (127.0.0.1:9877).
+Provides a secure local loopback socket (127.0.0.1:9877) enabling AI agents to
+receive interactive translation notifications and status updates from FME sessions.
 """
 
 from __future__ import annotations

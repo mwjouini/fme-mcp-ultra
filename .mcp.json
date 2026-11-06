@@ -7,3 +7,4 @@
   "command": "uvx",
   "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"]
 }
+

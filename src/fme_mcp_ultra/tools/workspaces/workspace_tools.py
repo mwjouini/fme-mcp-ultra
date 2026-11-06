@@ -195,7 +195,7 @@ def fme_enrich_geolocalisation(
 
 
 def fme_diagnose() -> dict[str, Any]:
-    """Run comprehensive system diagnostic for FME Form & Flow (inspired by qgis-mcp).
+    """Run comprehensive system diagnostic for FME Form & Flow.
 
     Verifies installation path, licensing, Python runtime, executable availability,
     running desktop processes (FME Workbench, FME Data Inspector), and loopback bridge.

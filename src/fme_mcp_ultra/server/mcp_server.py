@@ -96,7 +96,7 @@ def fme_enrich_geolocalisation(
 
 @mcp_server.tool()
 def fme_diagnose() -> dict[str, Any]:
-    """Run comprehensive system diagnostic for FME Form & Flow (inspired by qgis-mcp)."""
+    """Run comprehensive system diagnostic for FME Form & Flow."""
     return workspace_tools.fme_diagnose()
 
 

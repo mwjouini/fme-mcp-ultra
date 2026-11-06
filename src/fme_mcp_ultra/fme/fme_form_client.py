@@ -413,7 +413,7 @@ class FMEFormClient:
             return {"success": False, "error": str(e)}
 
     def diagnose(self) -> dict[str, Any]:
-        """Deep system and environment diagnostic for FME Form & Flow (inspired by qgis-mcp)."""
+        """Deep system and environment diagnostic for FME Form & Flow."""
 
         workbench_exe = self.fme_dir / (
             "fmeworkbench.exe" if sys.platform == "win32" else "fmeworkbench"

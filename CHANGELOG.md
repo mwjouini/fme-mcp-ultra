@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2026-11-06
 
 ### Added
-- **Desktop Interactivity Suite (Inspired by `qgis-mcp`)**:
+- **Desktop Interactivity Suite**:
   - `fme_diagnose`: System and environment diagnostic for FME installation, build, licensing, active processes, and bridge readiness.
   - `fme_inspect_canvas`: Structured `.fmw` XML canvas topology extraction (transformers with coordinates, links, unconnected port warnings).
   - `fme_open_in_workbench`: Non-blocking detached launcher for FME Workbench GUI.
