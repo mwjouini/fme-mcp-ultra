@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fme-mcp-ultra"
-version = "1.0.0"
+version = "1.1.0"
 description = "Universal, secure, extensible Model Context Protocol (MCP) server for Safe Software FME 2025.2, FME Form, FME Flow, and spatial data engineering."
 readme = "README.md"
 authors = [

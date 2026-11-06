@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-11-06
+
+### Added
+- **Desktop Interactivity Suite (Inspired by `qgis-mcp`)**:
+  - `fme_diagnose`: System and environment diagnostic for FME installation, build, licensing, active processes, and bridge readiness.
+  - `fme_inspect_canvas`: Structured `.fmw` XML canvas topology extraction (transformers with coordinates, links, unconnected port warnings).
+  - `fme_open_in_workbench`: Non-blocking detached launcher for FME Workbench GUI.
+  - `fme_open_in_inspector`: Instant dataset opening in FME Data Inspector GUI.
+  - `fme_preview_dataset`: Direct in-chat preview of GeoPackage, SQLite, CSV, and Excel tables and schemas.
+  - `FMEBridgeServer` & `FMEBridgeClient`: Loopback TCP socket bridge on `127.0.0.1:9877`.
+
+### Changed
+- **Zero-Configuration Generalisation**: Path resolution dynamically adapts to user home (`~`) and working directories without requiring explicit environment variables.
+- **Repository Streamlining**: Removed redundant Kubernetes and Helm charts to keep the Python package lightweight and focused on MCP core functionality.
+- Expanded automated test coverage to 32 tests spanning security, desktop tools, and MCP server calls.
+
+---
+
 ## [1.0.0] - 2026-11-06
 
 ### Added

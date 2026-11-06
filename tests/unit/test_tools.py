@@ -84,7 +84,7 @@ def test_catalog_register_and_search():
 
 def test_util_tools():
     assert util_ping()["data"]["status"] == "pong"
-    assert "1.0.0" in util_version()["data"]["version"]
+    assert "1.1.0" in util_version()["data"]["version"]
     assert util_validate_coordinates(48.85, 2.35)["data"]["valid_latitude"] is True
     assert util_validate_coordinates(120.0, 2.35)["data"]["valid_latitude"] is False
 

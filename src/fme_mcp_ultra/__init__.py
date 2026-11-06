@@ -5,7 +5,7 @@ Designed for Safe Software FME Form and FME Flow integration with AI agents.
 
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Mohamed Wael JOUINI"
 __license__ = "Apache-2.0"
 
