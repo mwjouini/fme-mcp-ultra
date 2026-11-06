@@ -111,11 +111,7 @@ Add this to `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Librar
   "mcpServers": {
     "fme-mcp-ultra": {
       "command": "uvx",
-      "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"],
-      "env": {
-        "FME_DIR": "C:\\Program Files\\FME",
-        "FME_ALLOWED_DIRS": "C:\\Program Files\\FME;E:\\fme_mcp"
-      }
+      "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"]
     }
   }
 }
@@ -129,11 +125,7 @@ Add to your client's MCP configuration settings:
   "mcpServers": {
     "fme-mcp-ultra": {
       "command": "fme-mcp-ultra",
-      "args": ["serve", "--transport", "stdio"],
-      "env": {
-        "PYTHONIOENCODING": "utf-8",
-        "PYTHONUNBUFFERED": "1"
-      }
+      "args": ["serve", "--transport", "stdio"]
     }
   }
 }
@@ -154,6 +146,7 @@ docker run -d --name fme-mcp-ultra \
 
 | Domain | Key Tools | Description |
 | :--- | :--- | :--- |
+| **Desktop Interactivity** | `fme_diagnose`, `fme_inspect_canvas`, `fme_open_in_workbench`, `fme_open_in_inspector`, `fme_preview_dataset` | Live environment diagnosis, XML canvas graph parsing, detached GUI launching, and instant dataset feature preview (inspired by `qgis-mcp`). |
 | **Workspaces** | `fme_discover_workspaces`, `fme_get_workspace`, `fme_run_workspace`, `fme_compare_workspaces` | Crawls directories, extracts published parameters, and executes `.fmw` workspaces. |
 | **Spatial Analysis** | `gis_reproject`, `gis_buffer`, `gis_validate_geometry` | High-precision CRS conversion (EPSG:4326 to 2154 / 3857), circular buffering, and polygon validation. |
 | **Data Engineering** | `data_read_metadata`, `data_profile` | Column analysis, null counts, distinct value distribution, and format inspection. |

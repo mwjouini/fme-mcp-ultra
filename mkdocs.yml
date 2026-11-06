@@ -56,7 +56,6 @@ nav:
   - Deployment:
       - Overview: deployment.md
       - Docker: docker.md
-      - Kubernetes: kubernetes.md
   - Observability: observability.md
   - Community:
       - Contributing: contributing.md
