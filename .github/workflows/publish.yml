@@ -4,11 +4,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      pypi_token:
-        description: "Optional PyPI API Token (pypi-...)"
-        required: false
-        type: string
 
 jobs:
   pypi-publish:
@@ -34,15 +29,15 @@ jobs:
       - name: Build Packages
         run: python -m build
 
-      - name: Publish with Token (Secret or Dispatch Input)
-        if: ${{ secrets.PYPI_API_TOKEN != '' || inputs.pypi_token != '' }}
+      - name: Publish with Token
+        if: ${{ secrets.PYPI_API_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ inputs.pypi_token != '' && inputs.pypi_token || secrets.PYPI_API_TOKEN }}
+          password: ${{ secrets.PYPI_API_TOKEN }}
           skip-existing: true
 
       - name: Publish with OIDC Trusted Publishing
-        if: ${{ secrets.PYPI_API_TOKEN == '' && inputs.pypi_token == '' }}
+        if: ${{ secrets.PYPI_API_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
