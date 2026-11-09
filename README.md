@@ -109,12 +109,37 @@ fme-mcp-ultra serve --transport stdio
 ### 1. Claude Desktop
 Add this to `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
 
+**Option A — With `uvx` (If uv is installed):**
 ```json
 {
   "mcpServers": {
     "fme-mcp-ultra": {
       "command": "uvx",
       "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+**Option B — With Python (`py` on Windows after `py -m pip install fme-mcp-ultra`):**
+```json
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "py",
+      "args": ["-m", "fme_mcp_ultra.cli.main", "serve", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+**Option C — Standalone FME Form Engine (Uses FME's embedded Python runtime):**
+```json
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "C:\\Program Files\\FME\\fme.exe",
+      "args": ["python", "-m", "fme_mcp_ultra.cli.main", "serve", "--transport", "stdio"]
     }
   }
 }

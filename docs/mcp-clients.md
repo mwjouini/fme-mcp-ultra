@@ -13,13 +13,39 @@ Locate your configuration file:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-### Standard Setup (via `uvx` — Zero Configuration)
+### Method A: With `uvx` (No installation needed if uv is installed)
 ```json
 {
   "mcpServers": {
     "fme-mcp-ultra": {
       "command": "uvx",
       "args": ["fme-mcp-ultra", "serve", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+### Method B: With Standard Python (After `py -m pip install fme-mcp-ultra`)
+For Windows users with Python installed (uses the built-in Windows `py` launcher):
+```json
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "py",
+      "args": ["-m", "fme_mcp_ultra.cli.main", "serve", "--transport", "stdio"]
+    }
+  }
+}
+```
+
+### Method C: Standalone FME Form Engine (Locked Enterprise Machines)
+Uses FME Form's own embedded Python runtime directly without requiring external Python:
+```json
+{
+  "mcpServers": {
+    "fme-mcp-ultra": {
+      "command": "C:\\Program Files\\FME\\fme.exe",
+      "args": ["python", "-m", "fme_mcp_ultra.cli.main", "serve", "--transport", "stdio"]
     }
   }
 }
