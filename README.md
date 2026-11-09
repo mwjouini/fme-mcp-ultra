@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/assets/logo.png" alt="fme-mcp-ultra logo" width="160" height="160" style="border-radius: 24px; margin-bottom: 12px;" />
+  <img src="https://raw.githubusercontent.com/mwjouini/fme-mcp-ultra/main/docs/assets/logo.png" alt="fme-mcp-ultra logo" width="160" height="160" style="margin-bottom: 12px;" />
   <h1>fme-mcp-ultra</h1>
   <p><strong>Universal, secure, production-grade Model Context Protocol (MCP) server for Safe Software FME (2018.0 – 2026+), FME Form, FME Flow, and spatial data engineering.</strong></p>
 

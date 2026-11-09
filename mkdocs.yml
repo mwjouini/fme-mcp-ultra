@@ -7,6 +7,8 @@ repo_name: mwjouini/fme-mcp-ultra
 
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
   language: en
   palette:
     - scheme: default
