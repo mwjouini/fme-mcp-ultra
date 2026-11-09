@@ -1,5 +1,7 @@
 # fme-mcp-ultra
 
+[![PyPI version](https://img.shields.io/pypi/v/fme-mcp-ultra.svg)](https://pypi.org/project/fme-mcp-ultra/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/fme-mcp-ultra.svg)](https://pypi.org/project/fme-mcp-ultra/)
 [![CI](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml/badge.svg)](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml)
 [![Security Audit](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml/badge.svg)](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml)
 [![Licence: Apache-2.0](https://img.shields.io/badge/Licence-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
