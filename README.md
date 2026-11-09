@@ -141,6 +141,13 @@ docker run -d --name fme-mcp-ultra \
   ghcr.io/mwjouini/fme-mcp-ultra:latest
 ```
 
+### 4. FME Workbench Desktop Live Hook
+To allow FME Workbench to report live translation events (status, duration, features read/written) directly to your AI agent:
+1. Open FME Workbench: **Navigator** -> **Workspace Parameters** -> **Scripting**.
+2. Paste [`examples/fme-workbench/startup_script.py`](examples/fme-workbench/startup_script.py) into **Startup Python Script**.
+3. Paste [`examples/fme-workbench/shutdown_script.py`](examples/fme-workbench/shutdown_script.py) into **Shutdown Python Script**.
+4. Read the full [FME Desktop Integration Guide](docs/desktop-integration.md).
+
 ---
 
 ## 🧰 Highlighted Tools Catalogue
