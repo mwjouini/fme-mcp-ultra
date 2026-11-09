@@ -1,15 +1,19 @@
-# fme-mcp-ultra
+<div align="center">
+  <img src="docs/assets/logo.png" alt="fme-mcp-ultra logo" width="160" height="160" style="border-radius: 24px; margin-bottom: 12px;" />
+  <h1>fme-mcp-ultra</h1>
+  <p><strong>Universal, secure, production-grade Model Context Protocol (MCP) server for Safe Software FME (2018.0 – 2026+), FME Form, FME Flow, and spatial data engineering.</strong></p>
 
-[![PyPI version](https://img.shields.io/pypi/v/fme-mcp-ultra.svg)](https://pypi.org/project/fme-mcp-ultra/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/fme-mcp-ultra.svg)](https://pypi.org/project/fme-mcp-ultra/)
-[![CI](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml/badge.svg)](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml)
-[![Security Audit](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml/badge.svg)](https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml)
-[![Licence: Apache-2.0](https://img.shields.io/badge/Licence-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
-[![Model Context Protocol](https://img.shields.io/badge/MCP-2025--2026_Compliant-green.svg)](https://modelcontextprotocol.io/)
-[![FME Compatibility](https://img.shields.io/badge/Safe_Software_FME-2018.0%20--%202026%2B%20(Form%20%26%20Flow)-orange.svg)](https://www.safe.com/)
-
-**Universal, secure, production-grade Model Context Protocol (MCP) server for Safe Software FME (compatible with FME Form & FME Flow from version 2018.0 through 2026+), geospatial data, enterprise ETL pipelines, and AI agents.**
+  <p>
+    <a href="https://pypi.org/project/fme-mcp-ultra/"><img src="https://img.shields.io/pypi/v/fme-mcp-ultra.svg" alt="PyPI version" /></a>
+    <a href="https://pypi.org/project/fme-mcp-ultra/"><img src="https://img.shields.io/pypi/dm/fme-mcp-ultra.svg" alt="PyPI Downloads" /></a>
+    <a href="https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml"><img src="https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+    <a href="https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml"><img src="https://github.com/mwjouini/fme-mcp-ultra/actions/workflows/security.yml/badge.svg" alt="Security Audit" /></a>
+    <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/Licence-Apache_2.0-blue.svg" alt="Licence: Apache-2.0" /></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg" alt="Python: 3.10+" /></a>
+    <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-2025--2026_Compliant-green.svg" alt="Model Context Protocol" /></a>
+    <a href="https://www.safe.com/"><img src="https://img.shields.io/badge/Safe_Software_FME-2018.0%20--%202026%2B%20(Form%20%26%20Flow)-orange.svg" alt="FME Compatibility" /></a>
+  </p>
+</div>
 
 Usable by any standard MCP client: **Claude Desktop, Claude Code, Cursor, VS Code, Antigravity, Windsurf, LangChain, and OpenAI Agents SDK.**
 
