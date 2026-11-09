@@ -11,6 +11,7 @@
     <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/Licence-Apache_2.0-blue.svg" alt="Licence: Apache-2.0" /></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg" alt="Python: 3.10+" /></a>
     <a href="https://modelcontextprotocol.io/"><img src="https://img.shields.io/badge/MCP-2025--2026_Compliant-green.svg" alt="Model Context Protocol" /></a>
+    <a href="https://glama.ai/mcp/servers/mwjouini/fme-mcp-ultra"><img src="https://glama.ai/mcp/servers/mwjouini/fme-mcp-ultra/badge" alt="Glama" /></a>
     <a href="https://www.safe.com/"><img src="https://img.shields.io/badge/Safe_Software_FME-2018.0%20--%202026%2B%20(Form%20%26%20Flow)-orange.svg" alt="FME Compatibility" /></a>
   </p>
 </div>
