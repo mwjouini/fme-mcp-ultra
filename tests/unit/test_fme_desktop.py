@@ -115,6 +115,9 @@ def test_fme_open_in_inspector_missing():
 
 def test_fme_bridge_loopback_socket():
     """Verify FMEBridgeServer and FMEBridgeClient roundtrip communication."""
+    import json
+    import socket
+
     port = 9889  # Distinct port for test
     server = FMEBridgeServer(host="127.0.0.1", port=port)
     client = FMEBridgeClient(host="127.0.0.1", port=port)
@@ -134,6 +137,23 @@ def test_fme_bridge_loopback_socket():
         diag_resp = client.send_command("diagnose")
         assert diag_resp["status"] == "SUCCESS"
         assert "fme_installed" in diag_resp["result"]
+
+        # Send event (as FME startup/shutdown script does)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect(("127.0.0.1", port))
+            sock.sendall(
+                (
+                    json.dumps({"event": "translation_started", "workspace": "test.fmw"}) + "\n"
+                ).encode("utf-8")
+            )
+            evt_resp = json.loads(sock.recv(4096).decode("utf-8"))
+            assert evt_resp["status"] == "SUCCESS"
+            assert evt_resp["event"] == "translation_started"
+
+        # Check last_event command
+        last_evt = client.send_command("last_event")
+        assert last_evt["status"] == "SUCCESS"
+        assert last_evt["result"]["event"] == "translation_started"
 
         # Send invalid command
         bad_resp = client.send_command("non_existent_command")

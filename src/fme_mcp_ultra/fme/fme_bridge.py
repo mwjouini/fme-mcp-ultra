@@ -32,6 +32,7 @@ class FMEBridgeServer:
         self.running = False
         self._server_sock: socket.socket | None = None
         self._thread: threading.Thread | None = None
+        self.last_event: dict[str, Any] | None = None
         self._handlers: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
             "ping": self._handle_ping,
             "diagnose": self._handle_diagnose,
@@ -40,6 +41,7 @@ class FMEBridgeServer:
             "open_inspector": self._handle_open_inspector,
             "preview_dataset": self._handle_preview_dataset,
             "execute_code": self._handle_execute_code,
+            "last_event": self._handle_last_event,
         }
 
     def start(self) -> None:
@@ -83,21 +85,30 @@ class FMEBridgeServer:
                     return
 
                 req = json.loads(raw_data.decode("utf-8"))
-                cmd = req.get("command", "")
-                params = req.get("params", {})
-
-                handler = self._handlers.get(cmd)
-                if handler:
-                    resp_payload = handler(params)
-                    response = {"status": "SUCCESS", "result": resp_payload}
+                if "event" in req:
+                    event_name = req.get("event", "")
+                    self.last_event = req
+                    logger.info(f"FME Bridge received event: '{event_name}'")
+                    response = {"status": "SUCCESS", "event": event_name, "received": True}
                 else:
-                    response = {"status": "ERROR", "error": f"Unknown command: '{cmd}'"}
+                    cmd = req.get("command", "")
+                    params = req.get("params", {})
+
+                    handler = self._handlers.get(cmd)
+                    if handler:
+                        resp_payload = handler(params)
+                        response = {"status": "SUCCESS", "result": resp_payload}
+                    else:
+                        response = {"status": "ERROR", "error": f"Unknown command: '{cmd}'"}
 
                 client_sock.sendall(json.dumps(response).encode("utf-8"))
             except Exception as e:
                 err_resp = {"status": "ERROR", "error": str(e)}
                 with contextlib.suppress(Exception):
                     client_sock.sendall(json.dumps(err_resp).encode("utf-8"))
+
+    def _handle_last_event(self, params: dict[str, Any]) -> dict[str, Any]:
+        return self.last_event or {}
 
     def _handle_ping(self, params: dict[str, Any]) -> dict[str, Any]:
         return {"pong": True, "timestamp": time.time()}

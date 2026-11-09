@@ -40,3 +40,4 @@ To check if the desktop bridge is active and reachable:
 fme-mcp-ultra doctor
 ```
 Or call the `fme_diagnose` MCP tool from Claude Desktop or Cursor.
+

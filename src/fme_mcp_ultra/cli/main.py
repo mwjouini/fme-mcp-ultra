@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -9,6 +11,7 @@ from rich.table import Table
 
 from fme_mcp_ultra import __version__
 from fme_mcp_ultra.core.config import settings
+from fme_mcp_ultra.fme.fme_bridge import fme_bridge_server
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
 from fme_mcp_ultra.server.mcp_server import mcp_server
 
@@ -29,6 +32,9 @@ def serve(
     port: int = typer.Option(settings.port, "--port", "-p", help="Port for HTTP/SSE"),
 ) -> None:
     """Launch the fme-mcp-ultra server."""
+    with contextlib.suppress(Exception):
+        fme_bridge_server.start()
+
     if transport == "stdio":
         mcp_server.run(transport="stdio")
     elif transport == "sse":
