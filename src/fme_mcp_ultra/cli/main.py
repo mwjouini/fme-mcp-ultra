@@ -23,6 +23,15 @@ cli = typer.Typer(
 console = Console()
 
 
+@cli.callback(invoke_without_command=True)
+def default_callback(ctx: typer.Context) -> None:
+    """Default handler: start stdio server if no subcommand is passed."""
+    if ctx.invoked_subcommand is None:
+        with contextlib.suppress(Exception):
+            fme_bridge_server.start()
+        mcp_server.run(transport="stdio")
+
+
 @cli.command()
 def serve(
     transport: str = typer.Option(
