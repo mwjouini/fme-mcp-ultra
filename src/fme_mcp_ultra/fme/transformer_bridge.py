@@ -115,7 +115,9 @@ class MCPAgentBridgeTransformer:
                 msg = (json.dumps(payload) + "\n").encode("utf-8")
                 self.sock.sendall(msg)
                 status = "CONNECTED"
-                response_text = f"Feature '{feature_type}' streamed to AI Agent via port {self.port}"
+                response_text = (
+                    f"Feature '{feature_type}' streamed to AI Agent via port {self.port}"
+                )
             except Exception as exc:
                 status = f"ERROR: {exc}"
                 self.connected = False

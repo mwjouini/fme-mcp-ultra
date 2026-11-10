@@ -93,6 +93,7 @@ class MCPAgentBridgeTransformer:
             self.connected = False
 """
 
+
 def encode_fme_text(text: str) -> str:
     """Encode python code into FME mapping XML representation."""
     encoded = text.replace("&", "&amp;")
@@ -107,11 +108,11 @@ def encode_fme_text(text: str) -> str:
 def build_fmx_content() -> str:
     encoded_py = encode_fme_text(FME_PYTHON_SOURCE)
     guid = "08e5e6b1-4f32-4759-86ab-590d9841f231"
-    
+
     return f"""#! <?xml version="1.0" encoding="UTF-8" ?>
 #! <TRANSFORMER
 # TRANSFORMER_BEGIN MCPAgentBridge,1,AI & Web,{guid},"Linked Always",Yes,NO_PARALLELISM,,No,25810,YES,No,,No,
-# 
+#
 # <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;"><b>MCPAgentBridge</b> connects FME Workbench directly to AI Agents &amp; MCP Servers (Claude, Antigravity, Cursor, ChatGPT). Runs entirely within FME Form's embedded Python runtime - no external Python installation required on Windows.</p>
 # TRANSFORMER_END
 #!   ARCGIS_COMPATIBILITY="ARCGIS_AUTO"
@@ -214,22 +215,24 @@ FACTORY_DEF {{*}} PythonFactory \\
 INCLUDE [puts {{MACRO WB_CURRENT_CONTEXT $(WB_OLD_CONTEXT_$(MCPAgentBridge_WORKSPACE_NAME))}}]
 """
 
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parent.parent
     transformers_dir = repo_root / "transformers"
     transformers_dir.mkdir(parents=True, exist_ok=True)
-    
+
     fmx_file = transformers_dir / "MCPAgentBridge.fmx"
     content = build_fmx_content()
     fmx_file.write_text(content, encoding="utf-8")
     print(f"Generated: {fmx_file} ({len(content)} bytes)")
-    
+
     # Also deploy directly to user's FME Transformers folder if present
     user_fme_dir = Path(os.environ.get("USERPROFILE", "")) / "Documents" / "FME" / "Transformers"
     if user_fme_dir.exists():
         target_fmx = user_fme_dir / "MCPAgentBridge.fmx"
         target_fmx.write_text(content, encoding="utf-8")
         print(f"Deployed directly to FME User Transformers: {target_fmx}")
+
 
 if __name__ == "__main__":
     main()

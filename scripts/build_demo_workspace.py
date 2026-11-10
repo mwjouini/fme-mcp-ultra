@@ -1,10 +1,13 @@
 """Create a demo FME Workspace (.fmw) showing MCPAgentBridge in action."""
 
 from __future__ import annotations
-from pathlib import Path
+
 import sys
+from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_fme_transformer import encode_fme_text, FME_PYTHON_SOURCE
+from build_fme_transformer import FME_PYTHON_SOURCE, encode_fme_text
+
 
 def build_demo_fmw() -> str:
     encoded_py = encode_fme_text(FME_PYTHON_SOURCE)
@@ -151,11 +154,13 @@ FACTORY_DEF {{*}} PythonFactory \\
    OUTPUT {{ PYOUTPUT FEATURE_TYPE MCPAgentBridge_OUTPUT }}
 """
 
+
 def main() -> None:
     demo_file = Path("e:/fme_mcp/fme-mcp-ultra/examples/workbench/MCPAgentBridge_Demo.fmw")
     content = build_demo_fmw()
     demo_file.write_text(content, encoding="utf-8")
     print(f"Generated demo workspace: {demo_file} ({len(content)} bytes)")
+
 
 if __name__ == "__main__":
     main()

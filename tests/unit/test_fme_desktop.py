@@ -1,6 +1,7 @@
 """Unit tests for FME Desktop integration, diagnosis, canvas inspection, and loopback bridge."""
 
 from pathlib import Path
+from unittest.mock import MagicMock
 
 from fme_mcp_ultra.fme.fme_bridge import FMEBridgeClient, FMEBridgeServer
 from fme_mcp_ultra.fme.fme_form_client import fme_form_client
@@ -120,6 +121,9 @@ def test_fme_bridge_loopback_socket():
 
     port = 9889  # Distinct port for test
     server = FMEBridgeServer(host="127.0.0.1", port=port)
+    server._handlers["diagnose"] = MagicMock(
+        return_value={"fme_installed": True, "version": "2025.2"}
+    )
     client = FMEBridgeClient(host="127.0.0.1", port=port)
 
     assert client.is_bridge_active(timeout=0.2) is False
