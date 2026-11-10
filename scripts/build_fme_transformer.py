@@ -111,14 +111,14 @@ def build_fmx_content() -> str:
 
     return f"""#! <?xml version="1.0" encoding="UTF-8" ?>
 #! <TRANSFORMER
-# TRANSFORMER_BEGIN MCPAgentBridge,1,AI & Web,{guid},"Linked Always",Yes,NO_PARALLELISM,,No,25810,YES,No,,No,
+# TRANSFORMER_BEGIN MCPAgentBridge,1,Web,{guid},"Linked Always",Yes,NO_PARALLELISM,,No,25810,YES,No,,No,
 #
 # <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;"><b>MCPAgentBridge</b> connects FME Workbench directly to AI Agents &amp; MCP Servers (Claude, Antigravity, Cursor, ChatGPT). Runs entirely within FME Form's embedded Python runtime - no external Python installation required on Windows.</p>
 # TRANSFORMER_END
 #!   ARCGIS_COMPATIBILITY="ARCGIS_AUTO"
 #!   ATTR_TYPE_ENCODING="SDF"
 #!   BLOCKED_LOOPING="Yes"
-#!   CATEGORY="AI &amp; Web"
+#!   CATEGORY="Web"
 #!   DESCRIPTION="&#10;&lt;p&gt;Connects FME Workbench directly to AI Agents and MCP servers using FME embedded Python.&lt;/p&gt;"
 #!   DOC_EXTENTS="1200 400"
 #!   DOC_TOP_LEFT="0 0"
@@ -232,6 +232,10 @@ def main() -> None:
         target_fmx = user_fme_dir / "MCPAgentBridge.fmx"
         target_fmx.write_text(content, encoding="utf-8")
         print(f"Deployed directly to FME User Transformers: {target_fmx}")
+
+    desktop_fmx = Path(os.environ.get("USERPROFILE", "")) / "Desktop" / "MCPAgentBridge.fmx"
+    desktop_fmx.write_text(content, encoding="utf-8")
+    print(f"Copied to Desktop for upload: {desktop_fmx}")
 
 
 if __name__ == "__main__":

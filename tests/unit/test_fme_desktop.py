@@ -124,6 +124,9 @@ def test_fme_bridge_loopback_socket():
     server._handlers["diagnose"] = MagicMock(
         return_value={"fme_installed": True, "version": "2025.2"}
     )
+    server._handlers["diagnose"] = MagicMock(
+        return_value={"fme_installed": True, "version": "2025.2"}
+    )
     client = FMEBridgeClient(host="127.0.0.1", port=port)
 
     assert client.is_bridge_active(timeout=0.2) is False
